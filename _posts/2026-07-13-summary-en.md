@@ -5,93 +5,131 @@ date: 2026-07-13
 lang: en
 ---
 
-> From 34 items, 4 important content pieces were selected
+> From 19 items, 6 important content pieces were selected
 
 ---
 
-1. [Claude Code vs OpenCode: Token Overhead Comparison](#item-1) ⭐️ 8.0/10
-2. [LLMs Create Value, But Labs May Not Capture It](#item-2) ⭐️ 8.0/10
-3. [Semi-invasive BCI NEO helps paralyzed patient write again in China](#item-3) ⭐️ 8.0/10
-4. [Grok Build CLI Emergency Update Disables Code Upload](#item-4) ⭐️ 8.0/10
+1. [Telegram's t.me Domain Suspended, Sparks Speculation](#item-1) ⭐️ 8.0/10
+2. [LAPD Ends Flock Surveillance Contract Amid Privacy Concerns](#item-2) ⭐️ 8.0/10
+3. [DOOMQL: A Doom-like game powered entirely by SQLite queries](#item-3) ⭐️ 8.0/10
+4. [CoT Is a Scaling Trap; Latent Reasoning Is the Next Wave](#item-4) ⭐️ 8.0/10
+5. [Reddit Debate: What Is Continual Learning?](#item-5) ⭐️ 8.0/10
+6. [Open-source tool filters arXiv papers by research interests](#item-6) ⭐️ 8.0/10
 
 ---
 
 <a id="item-1"></a>
-## [Claude Code vs OpenCode: Token Overhead Comparison](https://systima.ai/blog/claude-code-vs-opencode-token-overhead) ⭐️ 8.0/10
+## [Telegram's t.me Domain Suspended, Sparks Speculation](https://www.whois.com/whois/t.me) ⭐️ 8.0/10
 
-A study found that Claude Code sends approximately 33,000 tokens of overhead per request, while OpenCode sends only about 7,000, indicating significant inefficiency in token usage by Claude Code. This token overhead directly increases user costs and reduces workflow efficiency, given that many developers pay per token or have limited subscriptions. The findings could drive users toward more efficient alternatives like OpenCode. The study logged requests between each tool and Anthropic's endpoint, capturing all requests and usage blocks. It notes that Claude Code's inefficiency stems from its cache strategy and harness token usage, though the author acknowledges a caveat and plans a follow-up with qualitative results.
+Telegram's t.me domain, used for short links, has been suspended, as confirmed by WHOIS lookup showing disabled status codes. This disruption affects millions of Telegram users globally and raises concerns about the platform's reliance on GoDaddy as registrar, which has a history of opaque domain actions. The domain's status codes include clientRenewProhibited and serverDeleteProhibited, which ICANN documentation indicates are typically used during legal disputes or when deletion is pending.
 
-hackernews · systima · Jul 12, 18:25 · [Discussion](https://news.ycombinator.com/item?id=48883275)
+hackernews · Tiberium · Jul 13, 19:52 · [Discussion](https://news.ycombinator.com/item?id=48897878)
 
-**Background**: AI coding assistants like Claude Code and OpenCode use language models to generate code, and they incur token costs based on the number of tokens processed. 'Harness tokens' refer to the system prompt and overhead tokens beyond the user's actual input. The community has observed that some tools consume tokens aggressively, leading to 'tokenflation'.
+**Background**: Telegram is currently under legal and regulatory investigations in Russia, France, and India for various allegations. The t.me domain is a shortcut used by Telegram for sharing content.
 
-<details><summary>References</summary>
-<ul>
-<li><a href="https://www.zbuild.io/resources/news/opencode-vs-claude-code-vs-cursor-2026">OpenCode vs Claude Code vs Cursor in 2026... | ZBuild</a></li>
-<li><a href="https://thoughts.jock.pl/p/ai-coding-harness-agents-2026">Claude Code vs Codex vs Aider vs OpenCode vs Pi 2026</a></li>
+**Discussion**: Community comments express surprise that Telegram uses GoDaddy, known for lack of transparency, and note that the suspension may relate to India's investigation into exam cheating. One user highlights the importance of using redirects instead of direct third-party domain links.
 
-</ul>
-</details>
-
-**Discussion**: Community comments highlight that sub-agents in Claude Code can burn many tokens, and some users suspect Anthropic intentionally inflates token usage to drive subscriptions. The author also engaged with criticism about measuring the right metric and plans to add qualitative comparisons.
-
-**Tags**: `#AI coding tools`, `#token efficiency`, `#Claude Code`, `#OpenCode`, `#cost optimization`
+**Tags**: `#Telegram`, `#domain suspension`, `#ICANN`, `#GoDaddy`, `#regulatory investigation`
 
 ---
 
 <a id="item-2"></a>
-## [LLMs Create Value, But Labs May Not Capture It](https://geohot.github.io//blog/jekyll/update/2026/07/12/i-love-llms.html) ⭐️ 8.0/10
+## [LAPD Ends Flock Surveillance Contract Amid Privacy Concerns](https://techcrunch.com/2026/07/13/lapd-lets-contract-with-surveillance-giant-flock-expire-citing-serious-concerns-over-civil-liberties-and-privacy/) ⭐️ 8.0/10
 
-George Hotz published a blog post arguing that while LLMs produce real productivity gains and value, frontier AI labs like OpenAI and Anthropic are overvalued because they may not capture that value. The post challenges the hype-driven valuation of these companies. This critique is significant because it questions the fundamental business model of frontier AI labs, suggesting that even if AI transforms the economy, the labs themselves might not profit. It fuels ongoing debates about AI hype, open source vs. proprietary models, and where real value is created. Hotz specifically argues that widespread productivity improvements from LLMs do not necessarily translate into revenue for the labs that built them, as much of the value is captured by users and downstream applications. He also notes the rapid pace of progress, with models like Sonnet 4 and Opus 4.5 continuously shifting perceptions.
+The Los Angeles Police Department has allowed its contract with Flock Safety to expire, citing serious concerns over civil liberties and privacy. However, the cameras remain operational and continue collecting data that Flock can sell to other agencies. This decision highlights the tension between law enforcement surveillance and civil liberties, and reveals a loophole where private surveillance infrastructure persists even after contract termination. It underscores the challenge of regulating data collection by private companies that supply government agencies. Flock Safety owns the cameras and poles, so even without an LAPD contract, the cameras continue to record data that can be sold to other entities like CHP, LASB, FBI, and Palantir. The LAPD could also access data informally, making the contract expiration largely symbolic.
 
-hackernews · therepanic · Jul 12, 18:31 · [Discussion](https://news.ycombinator.com/item?id=48883343)
+hackernews · forks · Jul 13, 15:11 · [Discussion](https://news.ycombinator.com/item?id=48893947)
 
-**Background**: The term 'value capture' refers to a company's ability to turn the value it creates into profit. In tech, many innovations (e.g., the internet) created immense value but the companies that pioneered them didn't always capture it. Frontier labs like OpenAI and Anthropic have raised billions with the promise of AGI, but their revenue models rely on subscription fees and token sales. Hotz argues that open-source models and user-driven forks may undermine their ability to capture value.
+**Background**: Flock Safety is a surveillance company specializing in automated license plate recognition (ALPR) systems, which capture vehicle license plate data, photos, and location information. ALPR technology is used by law enforcement for tracking vehicles but has raised mass surveillance and privacy concerns. The LAPD's decision reflects broader debates about the balance between public safety and privacy rights.
 
-**Discussion**: Commenters largely agreed with Hotz's value capture argument, with SwellJoe calling it an astute explanation of frontier lab behavior. Others noted that productivity gains are real but often manifest in private, one-off software, making them hard to measure. Some expressed concern about open source sustainability, as easy forking reduces incentives to upstream contributions.
+<details><summary>References</summary>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Flock_Safety">Flock Safety - Wikipedia</a></li>
+<li><a href="https://www.cnet.com/home/security/when-flock-comes-to-town-why-cities-are-axing-the-controversial-surveillance-technology/">When Flock Surveillance Comes to Your Town: Everything to Know ... - CNET</a></li>
 
-**Tags**: `#LLMs`, `#AI hype`, `#value capture`, `#productivity`, `#open source`
+</ul>
+</details>
+
+**Discussion**: Commenters expressed skepticism about the contract expiration's impact, noting Flock cameras remain active and data is accessible to other agencies. One user highlighted high recidivism rates despite surveillance, questioning its effectiveness. Another argued it should be illegal for government to buy data it couldn't legally collect itself.
+
+**Tags**: `#surveillance`, `#privacy`, `#civil liberties`, `#Flock`, `#LAPD`
 
 ---
 
 <a id="item-3"></a>
-## [Semi-invasive BCI NEO helps paralyzed patient write again in China](https://www.zaobao.com.sg/news/china/story20260712-9199066) ⭐️ 8.0/10
+## [DOOMQL: A Doom-like game powered entirely by SQLite queries](https://simonwillison.net/2026/Jul/13/doomql/#atom-everything) ⭐️ 8.0/10
 
-The semi-invasive brain-computer interface (BCI) system NEO, co-developed by Boruikang and Tsinghua University, has been approved for clinical use in China and successfully enabled a 36-year-old paraplegic patient to regain the ability to grip and write through a coin-sized wireless implant. This marks a significant milestone as the first implantable BCI product approved for market in China, potentially offering a new rehabilitation pathway for thousands of paralyzed patients with cervical spinal cord injuries. As of March 13, 2026, NEO has completed 36 clinical surgeries and obtained registration certification; 32 patients with cervical spinal cord injuries in China have received semi-invasive BCI implants.
+Peter Gostev released DOOMQL, a Doom-like game where SQLite handles all game logic including movement, collision, enemy AI, and rendering through SQL queries. The game runs as a Python terminal script and uses a recursive CTE to implement a full ray tracer in SQLite. This project demonstrates an extremely novel use of SQLite as a complete game engine, pushing the boundaries of what a database can do. It inspires software engineers to think creatively about using databases beyond traditional roles and showcases the power of SQL for complex computations. The game is implemented as a Python terminal script and can be run with `uv run host/doomql.py`. It creates a SQLite database that can be explored with Datasette, and Simon Willison used Datasette Apps to build a live-refreshing web interface with a minimap. The rendering is done via a huge SQL query that implements ray tracing using a recursive CTE.
 
-telegram · zaihuapd · Jul 12, 14:39
+rss · Simon Willison · Jul 13, 22:34
 
-**Background**: Brain-computer interfaces (BCIs) are classified into invasive, non-invasive, and semi-invasive types. Semi-invasive BCIs like NEO involve placing electrodes on the brain's surface (electrocorticography) rather than penetrating deep tissue, balancing signal quality with reduced risk. This approach is considered safer than fully invasive systems while providing higher fidelity than non-invasive ones.
+**Background**: SQLite is a lightweight, embedded SQL database engine widely used in applications for data storage. Recursive CTEs (Common Table Expressions) allow SQL queries to perform iterative computations, which is leveraged here for ray tracing. The uv tool is an extremely fast Python package manager written in Rust, used to run the project. Datasette is a tool for exploring and publishing SQLite databases, and Datasette Apps lets users build custom HTML/JavaScript apps that query the database.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://www.linkedin.com/pulse/minds-interface-bridging-thought-technology-bci-neuranet-ai-otbae">The Mind's Interface : Bridging Thought and Technology with BCI</a></li>
-<li><a href="https://inf.news/en/tech/a7581e47af3584317d16626ad7fd1556.html">Brain-computer interface, waiting for the birth of a medical device - iNEWS</a></li>
-<li><a href="https://www.sango-automation.com/news/the-first-clinical-trial-implantation-of-brain-82641280.html">The First Clinical Trial Implantation Of Brain-computer Interface Products in Shanghai Was Successfully Completed - Industry News - News</a></li>
+<li><a href="https://forum.openmw.org/viewtopic.php?t=7193">SQLite based approach to storing game world state - openmw.org</a></li>
+<li><a href="https://github.com/astral-sh/uv">GitHub - astral-sh/uv: An extremely fast Python package and project manager, written in Rust. · GitHub</a></li>
+<li><a href="https://medium.com/@dieggo.filipe/uv-the-new-python-package-manager-you-need-to-know-491a147af74c">UV: The New Python Package Manager You Need to Know! | by Diego Lima | Medium</a></li>
 
 </ul>
 </details>
 
-**Tags**: `#brain-computer interface`, `#medical technology`, `#neurotechnology`, `#China`, `#rehabilitation`
+**Tags**: `#sqlite`, `#game-development`, `#python`, `#novel-approach`, `#doom`
 
 ---
 
 <a id="item-4"></a>
-## [Grok Build CLI Emergency Update Disables Code Upload](https://www.reddit.com/r/LocalLLaMA/comments/1ut7tis/comment/ox4zamk/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button) ⭐️ 8.0/10
+## [CoT Is a Scaling Trap; Latent Reasoning Is the Next Wave](https://www.reddit.com/r/MachineLearning/comments/1uviru5/chain_of_thought_is_a_scaling_trap_the_next_wave/) ⭐️ 8.0/10
 
-On July 13, Grok's server-side added a disable_codebase_upload flag that returns true, disabling code uploads after a researcher disclosed that the CLI uploads entire codebases and key files by default. This update addresses a critical privacy and security vulnerability that could expose sensitive code and credentials. It demonstrates a rapid response to user concerns, but also highlights the need for default transparency in AI coding tools. The server-side flag is named disable_codebase_upload and defaults to true, meaning code uploads are now blocked for all Grok Build CLI sessions. The exact mechanism of the upload was not publicly detailed, but the researcher's disclosure indicated default upload of entire codebases including key files.
+A Reddit post argues that Chain-of-Thought (CoT) reasoning is a costly interface artifact rather than a scalable path, and proposes that the next wave of LLM reasoning will shift into latent space, with methods like Coconut, HRM, and RecursiveMAS. This discussion highlights a critical limitation of current LLM reasoning—autoregressive token generation is inefficient and unfaithful—and points toward emerging latent reasoning approaches that could drastically reduce cost and latency while improving reasoning depth, but also introduces new governance challenges. The post identifies faithfulness and system cost as two practical problems of CoT, then surveys latent reasoning methods: Coconut uses continuous latent steps, HRM separates planning from execution, and RecursiveMAS passes latent embeddings between agents. BDH (Dragon Hatchling) aims to combine latent iteration with principled state management, achieving 97.4% accuracy on Sudoku without CoT.
 
-telegram · zaihuapd · Jul 13, 00:52
+reddit · r/MachineLearning · /u/meowsterpieces · Jul 13, 17:50
 
-**Background**: Grok Build CLI is a terminal-based coding agent that connects to xAI's Grok API, designed to assist with complex coding tasks. It was recently updated to be powered by Grok 4.5. The CLI by default uploaded the user's entire codebase and sensitive files, which posed a significant privacy risk. This incident is similar to other cases where AI coding assistants inadvertently expose proprietary code.
+**Background**: Chain-of-Thought (CoT) reasoning forces LLMs to generate intermediate textual steps, which is interpretable but expensive and can be unfaithful. Latent reasoning methods perform internal computations in a continuous vector space without generating tokens, reducing cost and allowing deeper recursion, but lose direct visibility of the reasoning process.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://x.ai/cli">Grok Build | SpaceXAI</a></li>
+<li><a href="https://ht0324.github.io/blog/2025/Coconut/">Continuous Latent Reasoning for LLMs ( COCONUT ) - Review</a></li>
+<li><a href="https://github.com/sapientinc/HRM-Text">GitHub - sapientinc/HRM-Text: HRM-Text is a 1B text generation model based on the HRM architecture, strengthened by task completion and latent space reasoning. · GitHub</a></li>
+<li><a href="https://recursivemas.github.io/">Recursive Multi-Agent Systems</a></li>
 
 </ul>
 </details>
 
-**Tags**: `#Grok`, `#AI Safety`, `#Privacy`, `#CLI Update`, `#Code Leak`
+**Tags**: `#machine learning`, `#LLM reasoning`, `#chain-of-thought`, `#latent reasoning`, `#AI research`
+
+---
+
+<a id="item-5"></a>
+## [Reddit Debate: What Is Continual Learning?](https://www.reddit.com/r/MachineLearning/comments/1uvm2p4/whats_your_take_on_continual_learning_d/) ⭐️ 8.0/10
+
+A Reddit discussion questions the definition and importance of continual learning, referencing Dario Amodei's prediction that it will be achieved by 2026 and Demis Hassabis's claim that it is the most important unsolved breakthrough for AGI. Continual learning is widely considered a key bottleneck on the path to AGI, yet its definition remains contested, causing confusion in research and industry. Clarifying what continual learning truly requires could accelerate progress toward more general AI. The discussion highlights that continual learning is often conflated with catastrophic forgetting, online learning, lifelong learning, or meta-learning, and questions whether the bottleneck is architectural, data-related, or fundamental to evaluation and benchmarking.
+
+reddit · r/MachineLearning · /u/watercolorer2024 · Jul 13, 19:47
+
+**Background**: Continual learning aims to enable AI models to learn sequentially without forgetting previous knowledge, addressing the stability-plasticity dilemma. Catastrophic forgetting, where neural networks rapidly lose old information when trained on new data, is a major challenge. Meta-learning, or 'learning to learn,' is a related but distinct concept focused on optimizing the learning process itself.
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Catastrophic_forgetting">Catastrophic forgetting</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Meta-learning_(computer_science)">Meta-learning (computer science) - Wikipedia</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#continual learning`, `#AGI`, `#catastrophic forgetting`, `#AI research`, `#machine learning`
+
+---
+
+<a id="item-6"></a>
+## [Open-source tool filters arXiv papers by research interests](https://www.reddit.com/r/MachineLearning/comments/1uvcdf7/hundreds_of_papers_hit_arxiv_every_day_and_maybe/) ⭐️ 8.0/10
+
+A developer created Research Radar, an open-source tool that automatically fetches arXiv papers, scores them against a user's custom research interests, and summarizes the most relevant ones in a daily digest. This tool addresses the common pain point of information overload for researchers, saving 30-60 minutes daily by surfacing only the papers that matter, and its domain-agnostic design makes it useful across fields like ML, physics, and biology. Research Radar uses a two-pass scoring system: a cheap model for abstract skimming and a strong model for full-text deep reading, with costs benchmarked in the repo. It is model-agnostic, supporting Claude, Codex, or local models via Ollama/vLLM.
+
+reddit · r/MachineLearning · /u/usedtobreath · Jul 13, 13:59
+
+**Background**: arXiv is a preprint repository where thousands of papers are posted daily, making it challenging for researchers to stay current with relevant work. Many use RSS feeds or newsletters, but these often highlight popular rather than personalized content. Research Radar automates the filtering and summarization process by scoring papers against a user's stated interests.
+
+**Tags**: `#arXiv`, `#research tool`, `#NLP`, `#open source`, `#machine learning`
 
 ---

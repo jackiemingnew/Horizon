@@ -5,93 +5,131 @@ date: 2026-07-13
 lang: zh
 ---
 
-> 从 34 条内容中筛选出 4 条重要资讯。
+> 从 19 条内容中筛选出 6 条重要资讯。
 
 ---
 
-1. [Claude Code 与 OpenCode 的 Token 开销对比](#item-1) ⭐️ 8.0/10
-2. [LLM 创造价值，但前沿实验室可能无法获得它](#item-2) ⭐️ 8.0/10
-3. [半侵入式脑机接口 NEO 助瘫痪患者重新握笔](#item-3) ⭐️ 8.0/10
-4. [Grok Build CLI 紧急更新关闭代码上传](#item-4) ⭐️ 8.0/10
+1. [Telegram 的 t.me 域名被暂停，引发猜测](#item-1) ⭐️ 8.0/10
+2. [洛杉矶警局因隐私担忧终止 Flock 监控合同](#item-2) ⭐️ 8.0/10
+3. [DOOMQL：完全由 SQLite 查询驱动的类《毁灭战士》游戏](#item-3) ⭐️ 8.0/10
+4. [CoT 是缩放陷阱；潜在推理是下一波](#item-4) ⭐️ 8.0/10
+5. [Reddit 辩论：什么是持续学习？](#item-5) ⭐️ 8.0/10
+6. [开源工具按研究兴趣过滤 arXiv 论文](#item-6) ⭐️ 8.0/10
 
 ---
 
 <a id="item-1"></a>
-## [Claude Code 与 OpenCode 的 Token 开销对比](https://systima.ai/blog/claude-code-vs-opencode-token-overhead) ⭐️ 8.0/10
+## [Telegram 的 t.me 域名被暂停，引发猜测](https://www.whois.com/whois/t.me) ⭐️ 8.0/10
 
-一项研究发现，Claude Code 每次请求会发送约 33,000 token 的开销，而 OpenCode 仅发送约 7,000 token，表明 Claude Code 在 token 使用上存在显著的低效。 这种 token 开销直接增加了用户成本并降低了工作流效率，因为许多开发者按 token 付费或拥有有限的订阅。这一发现可能促使用户转向更高效的替代方案，如 OpenCode。 该研究记录了每个工具与 Anthropic 端点之间的请求，捕获了所有请求和使用块。它指出 Claude Code 的低效源于其缓存策略和 harness token 使用，不过作者承认存在一个注意事项，并计划进行后续研究以提供定性结果。
+Telegram 用于短链接的 t.me 域名已被暂停，WHOIS 查询显示其状态代码已禁用。 这一中断影响了全球数百万 Telegram 用户，并引发了对该平台依赖 GoDaddy 作为注册商的担忧，后者有采取不透明域名操作的历史。 该域名的状态代码包括 clientRenewProhibited 和 serverDeleteProhibited，ICANN 文档表明这些代码通常在法律纠纷期间或删除待定时使用。
 
-hackernews · systima · 7月12日 18:25 · [社区讨论](https://news.ycombinator.com/item?id=48883275)
+hackernews · Tiberium · 7月13日 19:52 · [社区讨论](https://news.ycombinator.com/item?id=48897878)
 
-**背景**: 像 Claude Code 和 OpenCode 这样的 AI 编码助手使用语言模型生成代码，并根据处理的 token 数量产生 token 成本。'Harness token' 是指系统提示和超出用户实际输入的开销 token。社区已经观察到一些工具 aggressively 消耗 token，导致 'tokenflation'。
+**背景**: Telegram 目前因各种指控在俄罗斯、法国和印度面临法律和监管调查。t.me 域名是 Telegram 用于分享内容的短链接。
 
-<details><summary>参考链接</summary>
-<ul>
-<li><a href="https://www.zbuild.io/resources/news/opencode-vs-claude-code-vs-cursor-2026">OpenCode vs Claude Code vs Cursor in 2026... | ZBuild</a></li>
-<li><a href="https://thoughts.jock.pl/p/ai-coding-harness-agents-2026">Claude Code vs Codex vs Aider vs OpenCode vs Pi 2026</a></li>
+**社区讨论**: 社区评论对 Telegram 使用以不透明著称的 GoDaddy 表示惊讶，并指出此次暂停可能与印度对考试作弊的调查有关。一位用户强调了使用重定向而非直接第三方域名链接的重要性。
 
-</ul>
-</details>
-
-**社区讨论**: 社区评论指出，Claude Code 中的子代理可能会消耗大量 token，一些用户怀疑 Anthropic 故意夸大 token 使用量以推动订阅。作者还回应了关于衡量正确指标的批评，并计划添加定性比较。
-
-**标签**: `#AI coding tools`, `#token efficiency`, `#Claude Code`, `#OpenCode`, `#cost optimization`
+**标签**: `#Telegram`, `#domain suspension`, `#ICANN`, `#GoDaddy`, `#regulatory investigation`
 
 ---
 
 <a id="item-2"></a>
-## [LLM 创造价值，但前沿实验室可能无法获得它](https://geohot.github.io//blog/jekyll/update/2026/07/12/i-love-llms.html) ⭐️ 8.0/10
+## [洛杉矶警局因隐私担忧终止 Flock 监控合同](https://techcrunch.com/2026/07/13/lapd-lets-contract-with-surveillance-giant-flock-expire-citing-serious-concerns-over-civil-liberties-and-privacy/) ⭐️ 8.0/10
 
-George Hotz 发表了一篇博客文章，认为虽然 LLM 产生了实际的生产力提升和价值，但像 OpenAI 和 Anthropic 这样的前沿 AI 实验室被高估了，因为它们可能无法捕获这些价值。这篇文章挑战了这些公司基于炒作的价值评估。 这一批评意义重大，因为它质疑了前沿 AI 实验室的基本商业模式，指出即使 AI 改变了经济，实验室本身也可能无法盈利。这加剧了关于 AI 炒作、开源与专有模型以及真正价值所在之处的持续辩论。 Hotz 特别指出，LLM 带来的广泛生产力提升并不一定会转化为构建它们的实验室的收入，因为许多价值被用户和下游应用程序捕获。他还注意到进步的快速步伐，像 Sonnet 4 和 Opus 4.5 这样的模型不断改变人们的看法。
+洛杉矶警局以对公民自由和隐私的严重担忧为由，允许与 Flock Safety 的合同到期。然而，摄像头仍在运行并继续收集数据，Flock 可将这些数据出售给其他机构。 这一决定凸显了执法监控与公民自由之间的紧张关系，并揭示了一个漏洞：即使合同终止，私人监控基础设施依然存在。这凸显了监管向政府机构提供数据的私营公司数据收集的挑战。 Flock Safety 拥有摄像头和杆柱，因此即使没有 LAPD 合同，摄像头仍继续记录数据，并可出售给 CHP、LASB、FBI 和 Palantir 等其他实体。LAPD 也可能通过非正式途径访问数据，使合同到期在很大程度上流于形式。
 
-hackernews · therepanic · 7月12日 18:31 · [社区讨论](https://news.ycombinator.com/item?id=48883343)
+hackernews · forks · 7月13日 15:11 · [社区讨论](https://news.ycombinator.com/item?id=48893947)
 
-**背景**: “价值捕获”一词指的是公司将其创造的价值转化为利润的能力。在科技领域，许多创新（例如互联网）创造了巨大价值，但开创它们的公司并不总能捕获这些价值。像 OpenAI 和 Anthropic 这样的前沿实验室以 AGI 的承诺筹集了数十亿美元，但它们的收入模式依赖于订阅费和代币销售。Hotz 认为，开源模型和用户驱动的分支可能削弱它们捕获价值的能力。
+**背景**: Flock Safety 是一家专门提供自动车牌识别（ALPR）系统的监控公司，该系统捕获车牌数据、照片和位置信息。ALPR 技术被执法机构用于追踪车辆，但引发了关于大规模监控和隐私的担忧。LAPD 的决定反映了关于公共安全与隐私权平衡的更广泛争论。
 
-**社区讨论**: 评论者大多同意 Hotz 关于价值捕获的论点，SwellJoe 称其是对前沿实验室行为的精辟解释。其他人指出，生产力提升是真实的，但通常以私有的、一次性软件的形式出现，因此难以衡量。有些人表达了对开源可持续性的担忧，因为容易的分叉减少了向上游贡献的动力。
+<details><summary>参考链接</summary>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Flock_Safety">Flock Safety - Wikipedia</a></li>
+<li><a href="https://www.cnet.com/home/security/when-flock-comes-to-town-why-cities-are-axing-the-controversial-surveillance-technology/">When Flock Surveillance Comes to Your Town: Everything to Know ... - CNET</a></li>
 
-**标签**: `#LLMs`, `#AI hype`, `#value capture`, `#productivity`, `#open source`
+</ul>
+</details>
+
+**社区讨论**: 评论者对合同终止的影响表示怀疑，指出 Flock 摄像头仍在运行，其他机构可获取数据。有用户指出尽管有监控，累犯率仍很高，质疑其有效性。另一人认为，政府购买其本身无法合法收集的数据应属非法。
+
+**标签**: `#surveillance`, `#privacy`, `#civil liberties`, `#Flock`, `#LAPD`
 
 ---
 
 <a id="item-3"></a>
-## [半侵入式脑机接口 NEO 助瘫痪患者重新握笔](https://www.zaobao.com.sg/news/china/story20260712-9199066) ⭐️ 8.0/10
+## [DOOMQL：完全由 SQLite 查询驱动的类《毁灭战士》游戏](https://simonwillison.net/2026/Jul/13/doomql/#atom-everything) ⭐️ 8.0/10
 
-由博睿康和清华大学共同开发的半侵入式脑机接口系统 NEO 已在中国获批上市，并通过一枚硬币大小的无线植入物，成功帮助一名 36 岁高位截瘫患者重新实现抓握和书写能力。 这标志着中国首款获批上市的植入式脑机接口产品的重要里程碑，可能为数千名颈段脊髓损伤瘫痪患者提供新的康复途径。 截至 2026 年 3 月 13 日，NEO 已完成 36 例临床手术并取得注册证；中国已有 32 位颈段脊髓损伤患者接受了半侵入式脑机接口植入。
+Peter Gostev 发布了 DOOMQL，这是一个类《毁灭战士》的游戏，其中 SQLite 通过 SQL 查询处理所有游戏逻辑，包括移动、碰撞、敌人 AI 和渲染。该游戏作为 Python 终端脚本运行，并使用递归 CTE 在 SQLite 中实现了完整的光线追踪器。 该项目展示了 SQLite 作为完整游戏引擎的极其新颖的用途，拓展了数据库能力的边界。它激励软件工程师创造性地思考数据库在传统角色之外的用途，并展示了 SQL 进行复杂计算的能力。 该游戏作为 Python 终端脚本实现，可使用 `uv run host/doomql.py` 运行。它会创建一个 SQLite 数据库，可用 Datasette 进行探索，Simon Willison 使用 Datasette Apps 构建了一个带小地图的实时刷新网页界面。渲染通过一个巨大的 SQL 查询完成，该查询使用递归 CTE 实现了光线追踪。
 
-telegram · zaihuapd · 7月12日 14:39
+rss · Simon Willison · 7月13日 22:34
 
-**背景**: 脑机接口分为侵入式、非侵入式和半侵入式三类。像 NEO 这样的半侵入式脑机接口将电极放置在脑表面（皮层脑电图）而非深入组织，在信号质量与风险降低之间取得平衡。这种方法被认为比全侵入式系统更安全，同时提供比非侵入式更高的信号保真度。
+**背景**: SQLite 是一种轻量级嵌入式 SQL 数据库引擎，广泛应用于应用程序的数据存储。递归 CTE（公用表表达式）允许 SQL 查询执行迭代计算，此处用于光线追踪。uv 工具是用 Rust 编写的超快 Python 包管理器，用于运行该项目。Datasette 是一个探索和发布 SQLite 数据库的工具，而 Datasette Apps 允许用户构建自定义的 HTML/JavaScript 应用来查询数据库。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://www.linkedin.com/pulse/minds-interface-bridging-thought-technology-bci-neuranet-ai-otbae">The Mind's Interface : Bridging Thought and Technology with BCI</a></li>
-<li><a href="https://inf.news/en/tech/a7581e47af3584317d16626ad7fd1556.html">Brain-computer interface, waiting for the birth of a medical device - iNEWS</a></li>
-<li><a href="https://www.sango-automation.com/news/the-first-clinical-trial-implantation-of-brain-82641280.html">The First Clinical Trial Implantation Of Brain-computer Interface Products in Shanghai Was Successfully Completed - Industry News - News</a></li>
+<li><a href="https://forum.openmw.org/viewtopic.php?t=7193">SQLite based approach to storing game world state - openmw.org</a></li>
+<li><a href="https://github.com/astral-sh/uv">GitHub - astral-sh/uv: An extremely fast Python package and project manager, written in Rust. · GitHub</a></li>
+<li><a href="https://medium.com/@dieggo.filipe/uv-the-new-python-package-manager-you-need-to-know-491a147af74c">UV: The New Python Package Manager You Need to Know! | by Diego Lima | Medium</a></li>
 
 </ul>
 </details>
 
-**标签**: `#brain-computer interface`, `#medical technology`, `#neurotechnology`, `#China`, `#rehabilitation`
+**标签**: `#sqlite`, `#game-development`, `#python`, `#novel-approach`, `#doom`
 
 ---
 
 <a id="item-4"></a>
-## [Grok Build CLI 紧急更新关闭代码上传](https://www.reddit.com/r/LocalLLaMA/comments/1ut7tis/comment/ox4zamk/?utm_source=share&amp;utm_medium=web3x&amp;utm_name=web3xcss&amp;utm_term=1&amp;utm_content=share_button) ⭐️ 8.0/10
+## [CoT 是缩放陷阱；潜在推理是下一波](https://www.reddit.com/r/MachineLearning/comments/1uviru5/chain_of_thought_is_a_scaling_trap_the_next_wave/) ⭐️ 8.0/10
 
-7 月 13 日，Grok 服务器端新增了一个 disable_codebase_upload 字段并返回 true，从而禁用了代码上传功能。此前有研究员披露，该 CLI 默认会上传整个代码库及密钥文件。 此次更新解决了一个严重的隐私和安全漏洞，该漏洞可能导致敏感代码和凭据泄露。它展示了项目方对用户关切的快速响应，但也凸显了 AI 编码工具在默认行为上需要更高的透明度。 服务器端字段名为 disable_codebase_upload，默认值为 true，意味着现在所有 Grok Build CLI 会话的代码上传均被阻止。上传的具体机制未公开详细说明，但研究员的披露指出默认会上传包括密钥文件在内的整个代码库。
+一个 Reddit 帖子认为链式思维推理是一个昂贵的接口人工产物，而不是可扩展路径，并提出 LLM 推理的下一波将转向潜在空间，采用 Coconut、HRM 和 RecursiveMAS 等方法。 这一讨论突出了当前 LLM 推理的一个关键限制——自回归 token 生成效率低且不可信——并指向新兴的潜在推理方法，这些方法可以大幅降低成本和延迟，同时提高推理深度，但也引入了新的治理挑战。 帖子指出了 CoT 的两个实际问题：可信度和系统成本，然后调研了潜在推理方法：Coconut 使用连续潜在步骤，HRM 将规划与执行分离，RecursiveMAS 在代理之间传递潜在嵌入。BDH 旨在结合潜在迭代与有原则的状态管理，在数独上无需 CoT 即可达到 97.4%的准确率。
 
-telegram · zaihuapd · 7月13日 00:52
+reddit · r/MachineLearning · /u/meowsterpieces · 7月13日 17:50
 
-**背景**: Grok Build CLI 是一款基于终端的编程代理，连接到 xAI 的 Grok API，旨在辅助完成复杂编程任务。它最近更新为由 Grok 4.5 驱动。默认情况下，该 CLI 会上传用户的整个代码库及敏感文件，这构成了显著的隐私风险。这一事件与其他 AI 编程助手无意中暴露专有代码的案例类似。
+**背景**: 链式思维推理迫使 LLM 生成中间文本步骤，可解释但昂贵且可能不可信。潜在推理方法在连续向量空间中进行内部计算，无需生成 token，从而降低成本并允许更深层次的递归，但失去了对推理过程的直接可见性。
 
 <details><summary>参考链接</summary>
 <ul>
-<li><a href="https://x.ai/cli">Grok Build | SpaceXAI</a></li>
+<li><a href="https://ht0324.github.io/blog/2025/Coconut/">Continuous Latent Reasoning for LLMs ( COCONUT ) - Review</a></li>
+<li><a href="https://github.com/sapientinc/HRM-Text">GitHub - sapientinc/HRM-Text: HRM-Text is a 1B text generation model based on the HRM architecture, strengthened by task completion and latent space reasoning. · GitHub</a></li>
+<li><a href="https://recursivemas.github.io/">Recursive Multi-Agent Systems</a></li>
 
 </ul>
 </details>
 
-**标签**: `#Grok`, `#AI Safety`, `#Privacy`, `#CLI Update`, `#Code Leak`
+**标签**: `#machine learning`, `#LLM reasoning`, `#chain-of-thought`, `#latent reasoning`, `#AI research`
+
+---
+
+<a id="item-5"></a>
+## [Reddit 辩论：什么是持续学习？](https://www.reddit.com/r/MachineLearning/comments/1uvm2p4/whats_your_take_on_continual_learning_d/) ⭐️ 8.0/10
+
+Reddit 上的一场讨论质疑了持续学习的定义和重要性，引用了 Dario Amodei 关于 2026 年实现持续学习的预测和 Demis Hassabis 关于它是通往 AGI 最重要未突破难题的主张。 持续学习被广泛认为是通向 AGI 的关键瓶颈，但其定义仍存在争议，导致研究和行业混乱。澄清持续学习的真正要求可能会加速实现更通用 AI 的进展。 讨论指出持续学习经常与灾难性遗忘、在线学习、终身学习或元学习混淆，并质疑瓶颈是架构性的、数据相关的，还是评估和基准测试的根本问题。
+
+reddit · r/MachineLearning · /u/watercolorer2024 · 7月13日 19:47
+
+**背景**: 持续学习旨在使 AI 模型能够顺序学习而不遗忘先前知识，解决稳定性-可塑性困境。灾难性遗忘是指神经网络在学习新数据时迅速丢失旧信息，这是一大挑战。元学习，即“学会学习”，是一个相关但不同的概念，专注于优化学习过程本身。
+
+<details><summary>参考链接</summary>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Catastrophic_forgetting">Catastrophic forgetting</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Meta-learning_(computer_science)">Meta-learning (computer science) - Wikipedia</a></li>
+
+</ul>
+</details>
+
+**标签**: `#continual learning`, `#AGI`, `#catastrophic forgetting`, `#AI research`, `#machine learning`
+
+---
+
+<a id="item-6"></a>
+## [开源工具按研究兴趣过滤 arXiv 论文](https://www.reddit.com/r/MachineLearning/comments/1uvcdf7/hundreds_of_papers_hit_arxiv_every_day_and_maybe/) ⭐️ 8.0/10
+
+一位开发者创建了 Research Radar，这是一个开源工具，能自动获取 arXiv 论文，根据用户自定义的研究兴趣进行评分，并将最相关的论文摘要整理成每日摘要。 该工具解决了研究人员信息过载的常见痛点，每天节省 30-60 分钟，仅呈现相关论文，且其领域无关的设计使其适用于机器学习、物理、生物等多个领域。 Research Radar 使用两阶段评分系统：一个廉价模型用于摘要浏览，一个强模型用于全文深度阅读，成本已在仓库中基准测试。它支持多种模型，包括 Claude、Codex 或通过 Ollama/vLLM 运行本地模型。
+
+reddit · r/MachineLearning · /u/usedtobreath · 7月13日 13:59
+
+**背景**: arXiv 是一个预印本仓库，每天有数千篇论文发布，研究人员很难跟上相关工作的最新进展。许多人使用 RSS 订阅或新闻通讯，但这些往往突出热门内容而非个性化内容。Research Radar 通过根据用户指定的兴趣对论文进行评分，自动完成过滤和摘要生成过程。
+
+**标签**: `#arXiv`, `#research tool`, `#NLP`, `#open source`, `#machine learning`
 
 ---
