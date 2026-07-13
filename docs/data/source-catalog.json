@@ -1,0 +1,513 @@
+{
+  "meta": {
+    "catalog_version": "1.0",
+    "last_verified": "2026-07-13",
+    "horizon_hub_records": 84,
+    "forks_sampled": 60,
+    "modified_fork_configs_observed": 3,
+    "note": "Endpoint availability was checked on the verification date. Availability is not a content-quality guarantee."
+  },
+  "sources": [
+    {
+      "id": "google-research",
+      "name": "Google Research Blog",
+      "description": "Google 研究团队发布的论文、方法和项目进展。",
+      "type": "rss",
+      "category": "AI 研究",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://research.google/blog/",
+      "config": {
+        "name": "Google Research Blog",
+        "url": "https://blog.research.google/atom.xml",
+        "enabled": true,
+        "category": "ai-research"
+      }
+    },
+    {
+      "id": "mit-ai-news",
+      "name": "MIT News · AI",
+      "description": "MIT 官方人工智能专题新闻与研究动态。",
+      "type": "rss",
+      "category": "AI 研究",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://news.mit.edu/topic/artificial-intelligence2",
+      "config": {
+        "name": "MIT News - AI",
+        "url": "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
+        "enabled": true,
+        "category": "ai-research"
+      }
+    },
+    {
+      "id": "microsoft-research",
+      "name": "Microsoft Research",
+      "description": "微软研究院官方研究成果、论文和实验项目。",
+      "type": "rss",
+      "category": "AI 研究",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://www.microsoft.com/en-us/research/",
+      "config": {
+        "name": "Microsoft Research",
+        "url": "https://www.microsoft.com/en-us/research/feed/",
+        "enabled": true,
+        "category": "ai-research"
+      }
+    },
+    {
+      "id": "openai-news",
+      "name": "OpenAI News",
+      "description": "OpenAI 官方产品、研究与公司公告。",
+      "type": "rss",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://openai.com/news/",
+      "config": {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "enabled": true,
+        "category": "ai-official"
+      }
+    },
+    {
+      "id": "hugging-face-blog",
+      "name": "Hugging Face Blog",
+      "description": "模型、数据集、开源工具和社区项目的官方更新。",
+      "type": "rss",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://huggingface.co/blog",
+      "config": {
+        "name": "Hugging Face Blog",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "enabled": true,
+        "category": "ai-ecosystem"
+      }
+    },
+    {
+      "id": "aws-ml-blog",
+      "name": "AWS Machine Learning Blog",
+      "description": "AWS 官方机器学习产品、架构实践与案例。",
+      "type": "rss",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://aws.amazon.com/blogs/machine-learning/",
+      "config": {
+        "name": "AWS Machine Learning Blog",
+        "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+        "enabled": true,
+        "category": "ai-industry"
+      }
+    },
+    {
+      "id": "nvidia-developer",
+      "name": "NVIDIA Developer Blog",
+      "description": "NVIDIA 官方开发者技术、GPU 与 AI 工程更新。",
+      "type": "rss",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://developer.nvidia.com/blog/",
+      "config": {
+        "name": "NVIDIA Developer Blog",
+        "url": "https://developer.nvidia.com/blog/feed",
+        "enabled": true,
+        "category": "ai-infrastructure"
+      }
+    },
+    {
+      "id": "vllm-releases",
+      "name": "vLLM Releases",
+      "description": "vLLM 仓库直接发布的版本记录。",
+      "type": "github_repo",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "项目默认配置",
+      "homepage": "https://github.com/vllm-project/vllm/releases",
+      "config": {
+        "owner": "vllm-project",
+        "repo": "vllm",
+        "category": "ai-infrastructure"
+      }
+    },
+    {
+      "id": "sglang-releases",
+      "name": "SGLang Releases",
+      "description": "SGLang 仓库直接发布的版本记录。",
+      "type": "github_repo",
+      "category": "AI 生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "项目默认配置",
+      "homepage": "https://github.com/sgl-project/sglang/releases",
+      "config": {
+        "owner": "sgl-project",
+        "repo": "sglang",
+        "category": "ai-infrastructure"
+      }
+    },
+    {
+      "id": "github-changelog",
+      "name": "GitHub Changelog",
+      "description": "GitHub 产品与平台能力的官方变更记录。",
+      "type": "rss",
+      "category": "开发生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://github.blog/changelog/",
+      "config": {
+        "name": "GitHub Changelog",
+        "url": "https://github.blog/changelog/feed/",
+        "enabled": true,
+        "category": "developer-ecosystem"
+      }
+    },
+    {
+      "id": "rust-blog",
+      "name": "Rust Blog",
+      "description": "Rust 项目官方发布、版本和治理动态。",
+      "type": "rss",
+      "category": "开发生态",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "社区补充",
+      "homepage": "https://blog.rust-lang.org/",
+      "config": {
+        "name": "Rust Blog",
+        "url": "https://blog.rust-lang.org/feed.xml",
+        "enabled": true,
+        "category": "programming-languages"
+      }
+    },
+    {
+      "id": "kubernetes-blog",
+      "name": "Kubernetes Blog",
+      "description": "Kubernetes 官方版本、生态与技术文章。",
+      "type": "rss",
+      "category": "系统工程",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "社区补充",
+      "homepage": "https://kubernetes.io/blog/",
+      "config": {
+        "name": "Kubernetes Blog",
+        "url": "https://kubernetes.io/feed.xml",
+        "enabled": true,
+        "category": "cloud-native"
+      }
+    },
+    {
+      "id": "nature",
+      "name": "Nature",
+      "description": "Nature 期刊的最新研究与新闻条目。",
+      "type": "rss",
+      "category": "科学",
+      "language": "EN",
+      "source_level": "L1",
+      "origin": "Horizon Hub",
+      "homepage": "https://www.nature.com/nature/",
+      "config": {
+        "name": "Nature",
+        "url": "https://www.nature.com/nature.rss",
+        "enabled": true,
+        "category": "science"
+      }
+    },
+    {
+      "id": "simon-willison",
+      "name": "Simon Willison",
+      "description": "面向开发者的生成式 AI、工具与模型实测分析。",
+      "type": "rss",
+      "category": "AI 分析",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "项目默认配置",
+      "homepage": "https://simonwillison.net/",
+      "config": {
+        "name": "Simon Willison",
+        "url": "https://simonwillison.net/atom/everything/",
+        "enabled": true,
+        "category": "ai-analysis"
+      }
+    },
+    {
+      "id": "chip-huyen",
+      "name": "Chip Huyen",
+      "description": "机器学习系统、AI 工程与产业实践分析。",
+      "type": "rss",
+      "category": "AI 分析",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "Horizon Hub",
+      "homepage": "https://huyenchip.com/blog/",
+      "config": {
+        "name": "Chip Huyen",
+        "url": "https://huyenchip.com/feed.xml",
+        "enabled": true,
+        "category": "ai-analysis"
+      }
+    },
+    {
+      "id": "interconnects",
+      "name": "Interconnects",
+      "description": "基础模型、研究趋势与 AI 产业的专题分析。",
+      "type": "rss",
+      "category": "AI 分析",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "Horizon Hub",
+      "homepage": "https://www.interconnects.ai/",
+      "config": {
+        "name": "Interconnects",
+        "url": "https://www.interconnects.ai/feed",
+        "enabled": true,
+        "category": "ai-analysis"
+      }
+    },
+    {
+      "id": "brendan-gregg",
+      "name": "Brendan Gregg",
+      "description": "系统性能、可观测性与内核技术的专家分析。",
+      "type": "rss",
+      "category": "系统工程",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "Horizon Hub / fork 样本",
+      "homepage": "https://www.brendangregg.com/blog/",
+      "config": {
+        "name": "Brendan Gregg",
+        "url": "https://www.brendangregg.com/blog/rss.xml",
+        "enabled": true,
+        "category": "systems"
+      }
+    },
+    {
+      "id": "quanta-magazine",
+      "name": "Quanta Magazine",
+      "description": "数学、物理、生命科学和计算机科学的深度报道。",
+      "type": "rss",
+      "category": "科学",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "Horizon Hub",
+      "homepage": "https://www.quantamagazine.org/",
+      "config": {
+        "name": "Quanta Magazine",
+        "url": "https://api.quantamagazine.org/feed/",
+        "enabled": true,
+        "category": "science-analysis"
+      }
+    },
+    {
+      "id": "krebs-security",
+      "name": "Krebs on Security",
+      "description": "网络犯罪、数据泄露与安全事件的专业报道。",
+      "type": "rss",
+      "category": "安全",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "fork 样本",
+      "homepage": "https://krebsonsecurity.com/",
+      "config": {
+        "name": "Krebs on Security",
+        "url": "https://krebsonsecurity.com/feed/",
+        "enabled": true,
+        "category": "security"
+      }
+    },
+    {
+      "id": "schneier-security",
+      "name": "Schneier on Security",
+      "description": "安全、隐私与公共政策的长期分析。",
+      "type": "rss",
+      "category": "安全",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "fork 样本",
+      "homepage": "https://www.schneier.com/",
+      "config": {
+        "name": "Schneier on Security",
+        "url": "https://www.schneier.com/feed/atom/",
+        "enabled": true,
+        "category": "security"
+      }
+    },
+    {
+      "id": "digiday",
+      "name": "Digiday",
+      "description": "数字媒体、广告与营销行业报道。",
+      "type": "rss",
+      "category": "营销",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "fork 样本",
+      "homepage": "https://digiday.com/",
+      "config": {
+        "name": "Digiday",
+        "url": "https://digiday.com/feed/",
+        "enabled": true,
+        "category": "marketing"
+      }
+    },
+    {
+      "id": "marketing-dive",
+      "name": "Marketing Dive",
+      "description": "营销行业动态、品牌策略与平台变化报道。",
+      "type": "rss",
+      "category": "营销",
+      "language": "EN",
+      "source_level": "L2",
+      "origin": "fork 样本",
+      "homepage": "https://www.marketingdive.com/",
+      "config": {
+        "name": "Marketing Dive",
+        "url": "https://www.marketingdive.com/feeds/news/",
+        "enabled": true,
+        "category": "marketing"
+      }
+    },
+    {
+      "id": "hacker-news",
+      "name": "Hacker News",
+      "description": "技术社区投票与讨论，用于发现正在升温的线索。",
+      "type": "hackernews",
+      "category": "社区发现",
+      "language": "EN",
+      "source_level": "L3",
+      "origin": "项目默认配置",
+      "homepage": "https://news.ycombinator.com/",
+      "caveat": "热度和讨论质量不等于事实已经得到验证。",
+      "config": {
+        "enabled": true,
+        "fetch_top_stories": 30,
+        "min_score": 100,
+        "category": "community-discovery"
+      }
+    },
+    {
+      "id": "lobsters",
+      "name": "Lobsters",
+      "description": "偏工程与计算机科学的邀请制社区链接流。",
+      "type": "rss",
+      "category": "社区发现",
+      "language": "EN",
+      "source_level": "L3",
+      "origin": "Horizon Hub",
+      "homepage": "https://lobste.rs/",
+      "caveat": "作为发现入口使用，重要结论应回到原始链接核对。",
+      "config": {
+        "name": "Lobsters",
+        "url": "https://lobste.rs/rss",
+        "enabled": true,
+        "category": "community-discovery"
+      }
+    },
+    {
+      "id": "linux-do-top",
+      "name": "Linux.DO · Top",
+      "description": "Linux.DO 社区热门主题，比 latest 流更适合低噪声试跑。",
+      "type": "rss",
+      "category": "中文社区",
+      "language": "ZH",
+      "source_level": "L3",
+      "origin": "社区补充",
+      "homepage": "https://linux.do/top",
+      "caveat": "社区讨论是线索，不应替代项目公告、论文或官方文档。",
+      "config": {
+        "name": "Linux.DO Top",
+        "url": "https://linux.do/top.rss",
+        "enabled": true,
+        "category": "cn-community"
+      }
+    },
+    {
+      "id": "v2ex",
+      "name": "V2EX",
+      "description": "中文开发者社区的全站主题流。",
+      "type": "rss",
+      "category": "中文社区",
+      "language": "ZH",
+      "source_level": "L3",
+      "origin": "Horizon Hub",
+      "homepage": "https://www.v2ex.com/",
+      "caveat": "全站流噪声较高，建议配合分类与 AI 阈值。",
+      "config": {
+        "name": "V2EX",
+        "url": "https://v2ex.com/index.xml",
+        "enabled": true,
+        "category": "cn-community"
+      }
+    },
+    {
+      "id": "reddit-machine-learning",
+      "name": "r/MachineLearning",
+      "description": "机器学习论文、研究讨论与社区动态。",
+      "type": "reddit_subreddit",
+      "category": "社区发现",
+      "language": "EN",
+      "source_level": "L3",
+      "origin": "项目默认配置",
+      "homepage": "https://www.reddit.com/r/MachineLearning/",
+      "caveat": "帖子与评论是社区材料；论文结论应回到原文核对。",
+      "config": {
+        "subreddit": "MachineLearning",
+        "sort": "hot",
+        "time_filter": "day",
+        "fetch_limit": 10,
+        "min_score": 60,
+        "category": "ai-community"
+      }
+    },
+    {
+      "id": "reddit-local-llama",
+      "name": "r/LocalLLaMA",
+      "description": "本地模型、开源权重、推理工具与实测讨论。",
+      "type": "reddit_subreddit",
+      "category": "社区发现",
+      "language": "EN",
+      "source_level": "L3",
+      "origin": "项目默认配置",
+      "homepage": "https://www.reddit.com/r/LocalLLaMA/",
+      "caveat": "实测信息有价值，但环境差异和未经复现的说法较多。",
+      "config": {
+        "subreddit": "LocalLLaMA",
+        "sort": "hot",
+        "time_filter": "day",
+        "fetch_limit": 10,
+        "min_score": 60,
+        "category": "ai-community"
+      }
+    },
+    {
+      "id": "telegram-zaihuapd",
+      "name": "科技圈 · 在花频道",
+      "description": "覆盖面较广的中文科技新闻 Telegram 频道。",
+      "type": "telegram",
+      "category": "中文社区",
+      "language": "ZH",
+      "source_level": "L3",
+      "origin": "Horizon Hub / 项目默认配置",
+      "homepage": "https://t.me/zaihuapd",
+      "caveat": "频道可能转述其他来源，重要信息应继续追溯原始链接。",
+      "config": {
+        "channel": "zaihuapd",
+        "fetch_limit": 20,
+        "category": "cn-tech-news"
+      }
+    }
+  ]
+}
