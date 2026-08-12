@@ -241,6 +241,7 @@ def test_shadow_workflow_is_read_only_and_uploads_only_safe_bundle() -> None:
     )
 
     assert "workflow_dispatch:" in workflow
+    assert "\n  push:" not in workflow
     assert "contents: read" in workflow
     assert "contents: write" not in workflow
     assert "retention-days: 14" in workflow
