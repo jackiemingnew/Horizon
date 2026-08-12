@@ -2,6 +2,14 @@ name: Horizon Source Quality V2 Shadow
 
 on:
   workflow_dispatch:
+  # One-time bootstrap: GitHub only registers workflow_dispatch files after
+  # they reach the default branch. Restrict the bootstrap run to this branch
+  # and to this workflow file; remove this trigger after the first run starts.
+  push:
+    branches:
+      - codex/source-quality-v2
+    paths:
+      - .github/workflows/source-quality-shadow.yml
 
 permissions:
   contents: read
