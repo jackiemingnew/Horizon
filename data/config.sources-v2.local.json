@@ -1,0 +1,319 @@
+{
+  "version": "1.0",
+  "ai": {
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "base_url": "https://api.deepseek.com",
+    "api_key_env": "DEEPSEEK_API_KEY",
+    "temperature": 0.3,
+    "max_tokens": 8192,
+    "throttle_sec": 1,
+    "analysis_concurrency": 3,
+    "enrichment_concurrency": 2,
+    "languages": ["zh", "en"]
+  },
+  "sources": {
+    "github": [
+      {
+        "type": "repo_releases",
+        "owner": "vllm-project",
+        "repo": "vllm",
+        "enabled": true,
+        "category": "ai-infrastructure",
+        "source_id": "vllm-releases",
+        "source_level": "L1"
+      },
+      {
+        "type": "repo_releases",
+        "owner": "sgl-project",
+        "repo": "sglang",
+        "enabled": true,
+        "category": "ai-infrastructure",
+        "source_id": "sglang-releases",
+        "source_level": "L1"
+      }
+    ],
+    "hackernews": {
+      "enabled": true,
+      "fetch_top_stories": 30,
+      "min_score": 100,
+      "category": "community-discovery",
+      "source_id": "hacker-news",
+      "source_level": "L3"
+    },
+    "rss": [
+      {
+        "name": "Google Research Blog",
+        "url": "https://blog.research.google/atom.xml",
+        "enabled": true,
+        "category": "ai-research",
+        "source_id": "google-research",
+        "source_level": "L1"
+      },
+      {
+        "name": "MIT News - AI",
+        "url": "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
+        "enabled": true,
+        "category": "ai-research",
+        "source_id": "mit-ai-news",
+        "source_level": "L1"
+      },
+      {
+        "name": "Microsoft Research",
+        "url": "https://www.microsoft.com/en-us/research/feed/",
+        "enabled": true,
+        "category": "ai-research",
+        "source_id": "microsoft-research",
+        "source_level": "L1"
+      },
+      {
+        "name": "OpenAI News",
+        "url": "https://openai.com/news/rss.xml",
+        "enabled": true,
+        "category": "ai-official",
+        "source_id": "openai-news",
+        "source_level": "L1"
+      },
+      {
+        "name": "Hugging Face Blog",
+        "url": "https://huggingface.co/blog/feed.xml",
+        "enabled": true,
+        "category": "ai-ecosystem",
+        "source_id": "hugging-face-blog",
+        "source_level": "L1"
+      },
+      {
+        "name": "AWS Machine Learning Blog",
+        "url": "https://aws.amazon.com/blogs/machine-learning/feed/",
+        "enabled": true,
+        "category": "ai-industry",
+        "source_id": "aws-ml-blog",
+        "source_level": "L1"
+      },
+      {
+        "name": "NVIDIA Developer Blog",
+        "url": "https://developer.nvidia.com/blog/feed",
+        "enabled": true,
+        "category": "ai-infrastructure",
+        "source_id": "nvidia-developer",
+        "source_level": "L1"
+      },
+      {
+        "name": "GitHub Changelog",
+        "url": "https://github.blog/changelog/feed/",
+        "enabled": true,
+        "category": "developer-ecosystem",
+        "source_id": "github-changelog",
+        "source_level": "L1"
+      },
+      {
+        "name": "Rust Blog",
+        "url": "https://blog.rust-lang.org/feed.xml",
+        "enabled": true,
+        "category": "programming-languages",
+        "source_id": "rust-blog",
+        "source_level": "L1"
+      },
+      {
+        "name": "Kubernetes Blog",
+        "url": "https://kubernetes.io/feed.xml",
+        "enabled": true,
+        "category": "cloud-native",
+        "source_id": "kubernetes-blog",
+        "source_level": "L1"
+      },
+      {
+        "name": "Nature",
+        "url": "https://www.nature.com/nature.rss",
+        "enabled": true,
+        "category": "science",
+        "source_id": "nature",
+        "source_level": "L1"
+      },
+      {
+        "name": "Simon Willison",
+        "url": "https://simonwillison.net/atom/everything/",
+        "enabled": true,
+        "category": "ai-analysis",
+        "source_id": "simon-willison",
+        "source_level": "L2"
+      },
+      {
+        "name": "Chip Huyen",
+        "url": "https://huyenchip.com/feed.xml",
+        "enabled": true,
+        "category": "ai-analysis",
+        "source_id": "chip-huyen",
+        "source_level": "L2"
+      },
+      {
+        "name": "Interconnects",
+        "url": "https://www.interconnects.ai/feed",
+        "enabled": true,
+        "category": "ai-analysis",
+        "source_id": "interconnects",
+        "source_level": "L2"
+      },
+      {
+        "name": "Brendan Gregg",
+        "url": "https://www.brendangregg.com/blog/rss.xml",
+        "enabled": true,
+        "category": "systems",
+        "source_id": "brendan-gregg",
+        "source_level": "L2"
+      },
+      {
+        "name": "Quanta Magazine",
+        "url": "https://api.quantamagazine.org/feed/",
+        "enabled": true,
+        "category": "science-analysis",
+        "source_id": "quanta-magazine",
+        "source_level": "L2"
+      },
+      {
+        "name": "Krebs on Security",
+        "url": "https://krebsonsecurity.com/feed/",
+        "enabled": true,
+        "category": "security",
+        "source_id": "krebs-security",
+        "source_level": "L2"
+      },
+      {
+        "name": "Schneier on Security",
+        "url": "https://www.schneier.com/feed/atom/",
+        "enabled": true,
+        "category": "security",
+        "source_id": "schneier-security",
+        "source_level": "L2"
+      },
+      {
+        "name": "Digiday",
+        "url": "https://digiday.com/feed/",
+        "enabled": true,
+        "category": "marketing",
+        "source_id": "digiday",
+        "source_level": "L2"
+      },
+      {
+        "name": "Marketing Dive",
+        "url": "https://www.marketingdive.com/feeds/news/",
+        "enabled": true,
+        "category": "marketing",
+        "source_id": "marketing-dive",
+        "source_level": "L2"
+      },
+      {
+        "name": "Lobsters",
+        "url": "https://lobste.rs/rss",
+        "enabled": true,
+        "category": "community-discovery",
+        "source_id": "lobsters",
+        "source_level": "L3"
+      },
+      {
+        "name": "Linux.DO Top",
+        "url": "https://linux.do/top.rss",
+        "enabled": true,
+        "category": "cn-community",
+        "source_id": "linux-do-top",
+        "source_level": "L3"
+      },
+      {
+        "name": "V2EX",
+        "url": "https://v2ex.com/index.xml",
+        "enabled": true,
+        "category": "cn-community",
+        "source_id": "v2ex",
+        "source_level": "L3"
+      }
+    ],
+    "reddit": {
+      "enabled": true,
+      "subreddits": [
+        {
+          "subreddit": "MachineLearning",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 10,
+          "min_score": 60,
+          "category": "ai-community",
+          "source_id": "reddit-machine-learning",
+          "source_level": "L3"
+        },
+        {
+          "subreddit": "LocalLLaMA",
+          "enabled": true,
+          "sort": "hot",
+          "time_filter": "day",
+          "fetch_limit": 10,
+          "min_score": 60,
+          "category": "ai-community",
+          "source_id": "reddit-local-llama",
+          "source_level": "L3"
+        }
+      ],
+      "users": [],
+      "fetch_comments": 5
+    },
+    "telegram": {
+      "enabled": true,
+      "channels": [
+        {
+          "channel": "zaihuapd",
+          "enabled": true,
+          "fetch_limit": 20,
+          "category": "cn-tech-news",
+          "source_id": "telegram-zaihuapd",
+          "source_level": "L3"
+        }
+      ]
+    }
+  },
+  "filtering": {
+    "ai_score_threshold": 8.0,
+    "time_window_hours": 24
+  },
+  "quality_policy": {
+    "enabled": true,
+    "candidate_limits": {
+      "default_per_source": 5,
+      "max_candidates_before_ai": 60,
+      "overrides": {
+        "hacker-news": 15,
+        "telegram-zaihuapd": 8,
+        "reddit-machine-learning": 5,
+        "reddit-local-llama": 5,
+        "linux-do-top": 5
+      }
+    },
+    "provenance": {
+      "resolve_l3_original": true,
+      "max_evidence_urls": 5
+    },
+    "selection": {
+      "max_items": 10,
+      "target_verified_original_items": 5,
+      "max_l3_only_items": 2,
+      "default_max_items_per_discovery_source": 3,
+      "channel_group_limits": {
+        "hn_and_telegram": {
+          "source_ids": ["hacker-news", "telegram-zaihuapd"],
+          "max_items": 6
+        }
+      },
+      "default_max_items_per_category": 4
+    },
+    "deduplication": {
+      "history_days": 7,
+      "allow_material_updates": true
+    },
+    "run_health": {
+      "required_source_ids": [],
+      "min_healthy_source_ratio": 0.5
+    }
+  },
+  "webhook": {
+    "enabled": false
+  }
+}

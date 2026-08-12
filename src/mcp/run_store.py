@@ -5,17 +5,26 @@ from __future__ import annotations
 import json
 import re
 from dataclasses import dataclass
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 from uuid import uuid4
 
 
 STAGES = {
+    "fetched": "fetched_items.json",
     "raw": "raw_items.json",
     "scored": "scored_items.json",
+    "thresholded": "thresholded_items.json",
+    "deduped": "deduped_items.json",
     "filtered": "filtered_items.json",
     "enriched": "enriched_items.json",
+}
+AUDIT_FILES = {
+    "manifest": "manifest.json",
+    "source_health": "source_health.json",
+    "decisions": "decisions.json",
+    "model_calls": "model_calls.json",
 }
 RUN_ID_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
 LANGUAGE_RE = re.compile(r"^[A-Za-z0-9_-]+$")
@@ -55,6 +64,40 @@ class RunStore:
 
     def load_items(self, run_id: str, stage: str) -> list[dict[str, Any]]:
         return self.read_json(run_id, self._stage_file(stage))
+
+    def save_source_health(
+        self, run_id: str, results: list[dict[str, Any]]
+    ) -> Path:
+        """Persist the sanitized per-source outcomes for a run."""
+        return self.write_json(run_id, AUDIT_FILES["source_health"], results)
+
+    def load_source_health(self, run_id: str) -> list[dict[str, Any]]:
+        return self.read_json(run_id, AUDIT_FILES["source_health"])
+
+    def save_decisions(
+        self, run_id: str, decisions: list[dict[str, Any]]
+    ) -> Path:
+        """Persist deterministic item decisions without scraped bodies."""
+        return self.write_json(run_id, AUDIT_FILES["decisions"], decisions)
+
+    def load_decisions(self, run_id: str) -> list[dict[str, Any]]:
+        return self.read_json(run_id, AUDIT_FILES["decisions"])
+
+    def save_manifest(self, run_id: str, manifest: dict[str, Any]) -> Path:
+        """Persist the versioned run manifest."""
+        return self.write_json(run_id, AUDIT_FILES["manifest"], manifest)
+
+    def load_manifest(self, run_id: str) -> dict[str, Any]:
+        return self.read_json(run_id, AUDIT_FILES["manifest"])
+
+    def save_model_calls(
+        self, run_id: str, records: list[dict[str, Any]]
+    ) -> Path:
+        """Persist metadata-only model call records."""
+        return self.write_json(run_id, AUDIT_FILES["model_calls"], records)
+
+    def load_model_calls(self, run_id: str) -> list[dict[str, Any]]:
+        return self.read_json(run_id, AUDIT_FILES["model_calls"])
 
     def save_summary(self, run_id: str, language: str, markdown: str) -> Path:
         filename = self._summary_file(language)
@@ -107,6 +150,33 @@ class RunStore:
         entries.sort(key=lambda x: x["updated_at"] or x["created_at"], reverse=True)
         return entries[: max(0, limit)]
 
+    def prune_runs(self, *, older_than_days: int = 14) -> list[str]:
+        """Delete run directories whose recorded timestamp is past retention."""
+        if older_than_days <= 0:
+            raise ValueError("older_than_days must be positive")
+        cutoff = datetime.now(timezone.utc) - timedelta(days=older_than_days)
+        removed: list[str] = []
+        for run_dir in self.root.iterdir():
+            if not run_dir.is_dir():
+                continue
+            meta_path = run_dir / "meta.json"
+            try:
+                meta = json.loads(meta_path.read_text(encoding="utf-8"))
+                timestamp = meta.get("updated_at") or meta.get("created_at")
+                recorded = datetime.fromisoformat(str(timestamp).replace("Z", "+00:00"))
+                if recorded.tzinfo is None:
+                    recorded = recorded.replace(tzinfo=timezone.utc)
+            except (FileNotFoundError, json.JSONDecodeError, TypeError, ValueError):
+                continue
+            if recorded >= cutoff:
+                continue
+            resolved = run_dir.resolve()
+            if resolved.parent != self.root.resolve() or resolved.is_symlink():
+                continue
+            self._remove_run_tree(resolved)
+            removed.append(run_dir.name)
+        return sorted(removed)
+
     def write_json(self, run_id: str, filename: str, payload: Any) -> Path:
         path = self.run_dir(run_id) / filename
         path.write_text(
@@ -139,6 +209,18 @@ class RunStore:
         if not path.is_relative_to(root):
             raise ValueError("Invalid run_id")
         return path
+
+    @classmethod
+    def _remove_run_tree(cls, path: Path) -> None:
+        """Remove only regular files/directories inside one validated run root."""
+        for child in path.iterdir():
+            if child.is_symlink():
+                child.unlink()
+            elif child.is_dir():
+                cls._remove_run_tree(child)
+            else:
+                child.unlink()
+        path.rmdir()
 
     @staticmethod
     def _summary_file(language: str) -> str:

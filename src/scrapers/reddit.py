@@ -5,6 +5,7 @@ import calendar
 import logging
 import re
 from datetime import datetime, timezone
+from time import perf_counter
 from email.utils import parsedate_to_datetime
 from typing import Any, List, Optional, cast
 
@@ -19,6 +20,12 @@ from ..models import (
     RedditSubredditConfig,
     RedditUserConfig,
     SourceType,
+)
+from ..source_health import (
+    SourceFetchBatch,
+    attach_source_provenance,
+    source_run_result,
+    stable_source_id,
 )
 
 logger = logging.getLogger(__name__)
@@ -50,27 +57,101 @@ class RedditScraper(BaseScraper):
         super().__init__(config.model_dump(), http_client)
         self.reddit_config = config
         self._comment_semaphore = asyncio.Semaphore(MAX_COMMENT_CONCURRENCY)
+        self._health_success = False
+        self._health_error: Exception | None = None
+        self._health_fallback: str | None = None
 
     async def fetch(self, since: datetime) -> List[ContentItem]:
         if not self.config.get("enabled", True):
             return []
+        return (await self.fetch_with_results(since)).items
 
-        items = []
+    async def fetch_with_results(self, since: datetime) -> SourceFetchBatch:
+        if not self.config.get("enabled", True):
+            return SourceFetchBatch(items=[], source_results=[])
+        items: List[ContentItem] = []
+        results = []
         for sub_cfg in self.reddit_config.subreddits:
             if sub_cfg.enabled:
+                self._reset_source_health()
+                started_at = datetime.now(timezone.utc)
+                started_clock = perf_counter()
+                source_id = sub_cfg.source_id or stable_source_id(
+                    "reddit", f"subreddit:{sub_cfg.subreddit}"
+                )
                 try:
-                    items.extend(await self._fetch_subreddit(sub_cfg, since))
+                    source_items = await self._fetch_subreddit(sub_cfg, since)
                 except Exception as e:
                     logger.warning("Error fetching Reddit source: %s", e)
+                    source_items = []
+                    self._health_error = e
+                source_items = attach_source_provenance(
+                    source_items,
+                    source_id=source_id,
+                    source_level=sub_cfg.source_level,
+                    discovery_url=f"https://www.reddit.com/r/{sub_cfg.subreddit}/",
+                )
+                items.extend(source_items)
+                results.append(
+                    source_run_result(
+                        source_id=source_id,
+                        source_type=SourceType.REDDIT,
+                        started_at=started_at,
+                        started_clock=started_clock,
+                        items=source_items,
+                        error=self._source_health_error(),
+                        partial=self._health_success and self._health_error is not None,
+                        fallback_used=self._health_fallback,
+                    )
+                )
 
         for user_cfg in self.reddit_config.users:
             if user_cfg.enabled:
+                self._reset_source_health()
+                started_at = datetime.now(timezone.utc)
+                started_clock = perf_counter()
+                source_id = user_cfg.source_id or stable_source_id(
+                    "reddit", f"user:{user_cfg.username}"
+                )
                 try:
-                    items.extend(await self._fetch_user(user_cfg, since))
+                    source_items = await self._fetch_user(user_cfg, since)
                 except Exception as e:
                     logger.warning("Error fetching Reddit source: %s", e)
+                    source_items = []
+                    self._health_error = e
+                source_items = attach_source_provenance(
+                    source_items,
+                    source_id=source_id,
+                    source_level=user_cfg.source_level,
+                    discovery_url=f"https://www.reddit.com/user/{user_cfg.username}/",
+                )
+                items.extend(source_items)
+                results.append(
+                    source_run_result(
+                        source_id=source_id,
+                        source_type=SourceType.REDDIT,
+                        started_at=started_at,
+                        started_clock=started_clock,
+                        items=source_items,
+                        error=self._source_health_error(),
+                        partial=self._health_success and self._health_error is not None,
+                        fallback_used=self._health_fallback,
+                    )
+                )
 
-        return items
+        return SourceFetchBatch(items=items, source_results=results)
+
+    def _reset_source_health(self) -> None:
+        self._health_success = False
+        self._health_error = None
+        self._health_fallback = None
+
+    def _source_health_error(self) -> Exception | None:
+        if self._health_error is not None and not self._health_success:
+            return self._health_error
+        if not self._health_success:
+            return RuntimeError("No successful Reddit listing response")
+        return None
 
     async def _fetch_subreddit(
         self, cfg: RedditSubredditConfig, since: datetime
@@ -125,7 +206,12 @@ class RedditScraper(BaseScraper):
             response.raise_for_status()
         except httpx.HTTPError as e:
             logger.warning("Reddit RSS fallback failed for r/%s: %s", cfg.subreddit, e)
+            self._health_error = e
             return []
+
+        self._health_success = True
+        self._health_fallback = "rss"
+        self._health_error = None
 
         feed = feedparser.parse(response.text)
         items = []
@@ -188,7 +274,12 @@ class RedditScraper(BaseScraper):
             logger.warning(
                 "Reddit old HTML request failed for r/%s: %s", cfg.subreddit, e
             )
+            self._health_error = e
             return []
+
+        self._health_success = True
+        self._health_fallback = "html"
+        self._health_error = None
 
         posts = self._parse_old_reddit_posts(response.text, cfg)
         return await self._process_posts(
@@ -526,9 +617,14 @@ class RedditScraper(BaseScraper):
             if response.status_code == 403:
                 raise RedditBlockedError(url)
             response.raise_for_status()
+            self._health_success = True
+            if self._health_fallback is None:
+                self._health_fallback = "json"
+            self._health_error = None
             return response.json()
         except RedditBlockedError:
             raise
         except httpx.HTTPError as e:
             logger.warning("Reddit request failed for %s: %s", url, e)
+            self._health_error = e
             return None

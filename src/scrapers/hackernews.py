@@ -3,12 +3,18 @@
 import logging
 import re
 from datetime import datetime, timezone
+from time import perf_counter
 from typing import List, Optional
 import asyncio
 import httpx
 
 from .base import BaseScraper
 from ..models import ContentItem, SourceType, HackerNewsConfig
+from ..source_health import (
+    SourceFetchBatch,
+    attach_source_provenance,
+    source_run_result,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -21,59 +27,80 @@ class HackerNewsScraper(BaseScraper):
 
     def __init__(self, config: HackerNewsConfig, http_client: httpx.AsyncClient):
         super().__init__(config.model_dump(), http_client)
+        self.hn_config = config
         self.base_url = "https://hacker-news.firebaseio.com/v0"
 
     async def fetch(self, since: datetime) -> List[ContentItem]:
         if not self.config.get("enabled", True):
             return []
+        return (await self.fetch_with_results(since)).items
 
+    async def fetch_with_results(self, since: datetime) -> SourceFetchBatch:
+        """Fetch HN and expose outer transport failure separately from empty."""
+        if not self.config.get("enabled", True):
+            return SourceFetchBatch(items=[], source_results=[])
+        started_at = datetime.now(timezone.utc)
+        started_clock = perf_counter()
+        source_id = self.config.get("source_id") or "hacker-news"
+        error: Exception | None = None
         try:
-            response = await self.client.get(f"{self.base_url}/topstories.json")
-            response.raise_for_status()
-            story_ids = response.json()
-
-            fetch_count = self.config.get("fetch_top_stories", 30)
-            story_ids = story_ids[:fetch_count]
-
-            # Fetch story details concurrently
-            tasks = [self._fetch_story(story_id) for story_id in story_ids]
-            stories = await asyncio.gather(*tasks, return_exceptions=True)
-
-            # Filter and process stories, then fetch comments
+            items = await self._fetch_items(since)
+        except Exception as exc:
+            logger.warning("Error fetching Hacker News stories: %s", exc)
             items = []
-            min_score = self.config.get("min_score", 100)
+            error = exc
+        items = attach_source_provenance(
+            items,
+            source_id=source_id,
+            source_level=self.hn_config.source_level,
+        )
+        for item in items:
+            discussion_url = item.metadata.get("discussion_url")
+            if item.provenance and discussion_url:
+                item.provenance.discovery_url = discussion_url
+        result = source_run_result(
+            source_id=source_id,
+            source_type=SourceType.HACKERNEWS,
+            started_at=started_at,
+            started_clock=started_clock,
+            items=items,
+            error=error,
+        )
+        return SourceFetchBatch(items=items, source_results=[result])
 
-            comment_tasks = []
-            valid_stories = []
+    async def _fetch_items(self, since: datetime) -> List[ContentItem]:
+        response = await self.client.get(f"{self.base_url}/topstories.json")
+        response.raise_for_status()
+        story_ids = response.json()
 
-            for story in stories:
-                if isinstance(story, Exception) or story is None:
-                    continue
-                if story.get("score", 0) < min_score:
-                    continue
-                published_at = datetime.fromtimestamp(story["time"], tz=timezone.utc)
-                if published_at < since:
-                    continue
-                valid_stories.append(story)
-                # Queue comment fetching
-                comment_ids = story.get("kids", [])[:TOP_COMMENTS_LIMIT]
-                comment_tasks.append(self._fetch_comments(comment_ids))
-
-            # Fetch all comments concurrently
-            all_comments = await asyncio.gather(*comment_tasks, return_exceptions=True)
-
-            for story, comments in zip(valid_stories, all_comments):
-                if isinstance(comments, Exception):
-                    comments = []
-                item = self._parse_story(story, comments)
-                if item:
-                    items.append(item)
-
-            return items
-
-        except httpx.HTTPError as e:
-            logger.warning("Error fetching Hacker News stories: %s", e)
-            return []
+        fetch_count = self.config.get("fetch_top_stories", 30)
+        story_ids = story_ids[:fetch_count]
+        tasks = [self._fetch_story(story_id) for story_id in story_ids]
+        stories = await asyncio.gather(*tasks, return_exceptions=True)
+        items: List[ContentItem] = []
+        min_score = self.config.get("min_score", 100)
+        comment_tasks = []
+        valid_stories = []
+        for story in stories:
+            if isinstance(story, Exception) or story is None:
+                continue
+            if story.get("score", 0) < min_score:
+                continue
+            published_at = datetime.fromtimestamp(story["time"], tz=timezone.utc)
+            if published_at < since:
+                continue
+            valid_stories.append(story)
+            comment_tasks.append(
+                self._fetch_comments(story.get("kids", [])[:TOP_COMMENTS_LIMIT])
+            )
+        all_comments = await asyncio.gather(*comment_tasks, return_exceptions=True)
+        for story, comments in zip(valid_stories, all_comments):
+            if isinstance(comments, Exception):
+                comments = []
+            item = self._parse_story(story, comments)
+            if item:
+                items.append(item)
+        return items
 
     async def _fetch_story(self, story_id: int) -> Optional[dict]:
         try:

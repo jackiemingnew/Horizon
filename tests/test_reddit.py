@@ -232,6 +232,36 @@ def test_reddit_listing_old_failure_falls_back_to_json_then_rss():
     assert items[0].metadata["fallback"] == "rss"
 
 
+def test_reddit_successful_rss_fallback_is_not_marked_partial():
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.host == "old.reddit.com":
+            return httpx.Response(500)
+        if request.url.path.endswith("/hot.json"):
+            return httpx.Response(403)
+        if request.url.path.endswith("/hot/.rss"):
+            return httpx.Response(
+                200,
+                text="""<?xml version="1.0"?><feed xmlns="http://www.w3.org/2005/Atom">
+                <entry><id>t3_rss123</id><title>RSS fallback post</title>
+                <author><name>rss_author</name></author>
+                <link href="https://www.reddit.com/r/LocalLLaMA/comments/rss123/test/" />
+                <updated>2030-01-01T00:00:00+00:00</updated></entry></feed>""",
+            )
+        raise AssertionError(f"unexpected url: {request.url}")
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    scraper = RedditScraper(_make_config(fetch_comments=0), client)
+
+    batch = asyncio.run(
+        scraper.fetch_with_results(datetime(2029, 12, 31, tzinfo=timezone.utc))
+    )
+    asyncio.run(client.aclose())
+
+    assert batch.source_results[0].status.value == "success"
+    assert batch.source_results[0].fallback_used == "rss"
+    assert batch.source_results[0].error_code is None
+
+
 def test_reddit_comments_use_old_reddit_first():
     requests = []
 

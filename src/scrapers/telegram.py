@@ -4,6 +4,7 @@ import asyncio
 import logging
 import re
 from datetime import datetime, timezone
+from time import perf_counter
 from typing import List, Optional
 
 import httpx
@@ -11,6 +12,12 @@ from bs4 import BeautifulSoup
 
 from .base import BaseScraper
 from ..models import ContentItem, TelegramConfig, TelegramChannelConfig, SourceType
+from ..source_health import (
+    SourceFetchBatch,
+    attach_source_provenance,
+    source_run_result,
+    stable_source_id,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -28,23 +35,59 @@ class TelegramScraper(BaseScraper):
     async def fetch(self, since: datetime) -> List[ContentItem]:
         if not self.config.get("enabled", True):
             return []
+        return (await self.fetch_with_results(since)).items
 
+    async def fetch_with_results(self, since: datetime) -> SourceFetchBatch:
+        if not self.config.get("enabled", True):
+            return SourceFetchBatch(items=[], source_results=[])
         tasks = []
         for channel_cfg in self.telegram_config.channels:
             if channel_cfg.enabled:
-                tasks.append(self._fetch_channel(channel_cfg, since))
+                tasks.append(self._fetch_channel_result(channel_cfg, since))
 
         if not tasks:
-            return []
+            return SourceFetchBatch(items=[], source_results=[])
 
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        batches = await asyncio.gather(*tasks)
         items = []
-        for result in results:
-            if isinstance(result, Exception):
-                logger.warning("Error fetching Telegram channel: %s", result)
-            elif isinstance(result, list):
-                items.extend(result)
-        return items
+        results = []
+        for batch in batches:
+            items.extend(batch.items)
+            results.extend(batch.source_results)
+        return SourceFetchBatch(items=items, source_results=results)
+
+    async def _fetch_channel_result(
+        self, cfg: TelegramChannelConfig, since: datetime
+    ) -> SourceFetchBatch:
+        started_at = datetime.now(timezone.utc)
+        started_clock = perf_counter()
+        source_id = cfg.source_id or stable_source_id("telegram", cfg.channel)
+        error: Exception | None = None
+        try:
+            items = await self._fetch_channel(cfg, since)
+        except Exception as exc:
+            logger.warning(
+                "Telegram request failed for %s: [%s]",
+                cfg.channel,
+                type(exc).__name__,
+            )
+            items = []
+            error = exc
+        items = attach_source_provenance(
+            items,
+            source_id=source_id,
+            source_level=cfg.source_level,
+            discovery_url=f"https://t.me/s/{cfg.channel}",
+        )
+        result = source_run_result(
+            source_id=source_id,
+            source_type=SourceType.TELEGRAM,
+            started_at=started_at,
+            started_clock=started_clock,
+            items=items,
+            error=error,
+        )
+        return SourceFetchBatch(items=items, source_results=[result])
 
     async def _fetch_channel(self, cfg: TelegramChannelConfig, since: datetime) -> List[ContentItem]:
         url = f"{TELEGRAM_WEB_BASE}/{cfg.channel}"
@@ -58,8 +101,7 @@ class TelegramScraper(BaseScraper):
                 response = await self.client.get(url, headers=headers, follow_redirects=True, timeout=120.0)
             response.raise_for_status()
         except Exception as e:
-            logger.warning("Telegram request failed for %s: [%s] %r", cfg.channel, type(e).__name__, e)
-            return []
+            raise e
 
         return self._parse_channel_html(response.text, cfg, since)
 

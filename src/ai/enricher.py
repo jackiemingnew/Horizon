@@ -30,6 +30,11 @@ class ContentEnricher:
     def __init__(self, ai_client: AIClient):
         self.client = ai_client
 
+    def _client_for_item(self, item: ContentItem):
+        if hasattr(self.client, "for_item"):
+            return self.client.for_item(str(item.id))
+        return self.client
+
     def _get_concurrency(self) -> int:
         """Return the configured enrichment concurrency, clamped to 1 or above."""
         config = getattr(self.client, "config", None)
@@ -51,7 +56,10 @@ class ContentEnricher:
                     await self._enrich_item(item)
                 except Exception as e:
                     print(f"Error enriching item {item.id}: {e}, falling back to translation")
-                    await self._translate_item(item)
+                    translated = await self._translate_item(item)
+                    item.metadata["enrichment_status"] = (
+                        "fallback" if translated else "failed"
+                    )
             progress.advance(progress_task)
 
         with Progress(
@@ -117,7 +125,7 @@ class ContentEnricher:
         )
 
         try:
-            response = await self.client.complete(
+            response = await self._client_for_item(item).complete(
                 system=CONCEPT_EXTRACTION_SYSTEM,
                 user=user_prompt,
             )
@@ -185,7 +193,7 @@ class ContentEnricher:
             web_context=web_context or "No web search results available.",
         )
 
-        response = await self.client.complete(
+        response = await self._client_for_item(item).complete(
             system=CONTENT_ENRICHMENT_SYSTEM,
             user=user_prompt,
         )
@@ -196,7 +204,10 @@ class ContentEnricher:
             # Gracefully degrade: fall back to a lightweight translation
             # instead of dropping the item untranslated.
             print(f"Warning: could not parse enrichment response for {item.id}, falling back to translation")
-            await self._translate_item(item)
+            translated = await self._translate_item(item)
+            item.metadata["enrichment_status"] = (
+                "fallback" if translated else "failed"
+            )
             return
 
         # Combine structured sub-fields into per-language detailed_summary
@@ -235,12 +246,13 @@ class ContentEnricher:
         item.metadata["detailed_summary"] = item.metadata.get("detailed_summary_en", "")
         item.metadata["background"] = item.metadata.get("background_en", "")
         item.metadata["community_discussion"] = item.metadata.get("community_discussion_en", "")
+        item.metadata["enrichment_status"] = "ok"
 
-    async def _translate_item(self, item: ContentItem) -> None:
+    async def _translate_item(self, item: ContentItem) -> bool:
         """Lightweight translation fallback: when full enrichment fails, at least
         translate the title and summary to Chinese so the item is not dropped."""
         try:
-            response = await self.client.complete(
+            response = await self._client_for_item(item).complete(
                 system="You are a translator. Translate to Simplified Chinese. Return only valid JSON, no other text.",
                 user=(
                     f'Title: {item.title}\n'
@@ -251,9 +263,14 @@ class ContentEnricher:
             )
             result = self._parse_json_response(response)
             if result:
+                translated = False
                 if result.get("title_zh"):
                     item.metadata["title_zh"] = result["title_zh"]
+                    translated = True
                 if result.get("summary_zh"):
                     item.metadata["detailed_summary_zh"] = result["summary_zh"]
+                    translated = True
+                return translated
         except Exception:
-            pass
+            return False
+        return False

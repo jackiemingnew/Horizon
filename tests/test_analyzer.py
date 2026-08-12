@@ -94,3 +94,18 @@ def test_analyze_batch_concurrent_preserves_order(monkeypatch):
     result = asyncio.run(analyzer.analyze_batch(items))
 
     assert [item.id for item in result] == [item.id for item in items]
+
+
+def test_v2_analysis_failure_is_not_converted_to_an_ordinary_zero_score():
+    class FailingClient:
+        config = SimpleNamespace(analysis_concurrency=1, throttle_sec=0)
+
+        async def complete(self, **kwargs):
+            raise RuntimeError("provider unavailable")
+
+    analyzer = ContentAnalyzer(FailingClient(), failure_score=None)
+    [result] = asyncio.run(analyzer.analyze_batch([_make_item("rss:test:failed")]))
+
+    assert result.ai_score is None
+    assert result.metadata["ai_status"] == "failed"
+    assert result.ai_reason == "Analysis failed"

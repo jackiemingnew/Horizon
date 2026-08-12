@@ -34,6 +34,16 @@ class TokenUsageSnapshot:
 _provider_usage: Dict[str, ProviderUsage] = {}
 
 
+def _copy_usage() -> Dict[str, ProviderUsage]:
+    return {
+        provider: ProviderUsage(
+            input_tokens=usage.input_tokens,
+            output_tokens=usage.output_tokens,
+        )
+        for provider, usage in _provider_usage.items()
+    }
+
+
 def record_usage(provider: str, input_tokens: int = 0, output_tokens: int = 0) -> None:
     """Accumulate token usage for a given provider.
 
@@ -57,7 +67,26 @@ def get_usage_snapshot() -> TokenUsageSnapshot:
     return TokenUsageSnapshot(
         total_input_tokens=total_in,
         total_output_tokens=total_out,
-        per_provider=dict(_provider_usage),
+        per_provider=_copy_usage(),
+    )
+
+
+def usage_delta(before: TokenUsageSnapshot) -> TokenUsageSnapshot:
+    """Return this run's usage without resetting process-global counters."""
+    current = get_usage_snapshot()
+    providers = set(current.per_provider) | set(before.per_provider)
+    per_provider: Dict[str, ProviderUsage] = {}
+    for provider in providers:
+        now = current.per_provider.get(provider, ProviderUsage())
+        prior = before.per_provider.get(provider, ProviderUsage())
+        input_tokens = max(0, now.input_tokens - prior.input_tokens)
+        output_tokens = max(0, now.output_tokens - prior.output_tokens)
+        if input_tokens or output_tokens:
+            per_provider[provider] = ProviderUsage(input_tokens, output_tokens)
+    return TokenUsageSnapshot(
+        total_input_tokens=sum(value.input_tokens for value in per_provider.values()),
+        total_output_tokens=sum(value.output_tokens for value in per_provider.values()),
+        per_provider=per_provider,
     )
 
 

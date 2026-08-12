@@ -2,12 +2,19 @@
 
 import logging
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+from time import perf_counter
 from typing import List, Optional
 import httpx
 
 from .base import BaseScraper
-from ..models import ContentItem, SourceType, GitHubSourceConfig
+from ..models import ContentItem, SourceType, GitHubSourceConfig, SourceErrorCode
+from ..source_health import (
+    SourceFetchBatch,
+    attach_source_provenance,
+    source_run_result,
+    stable_source_id,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -49,26 +56,70 @@ class GitHubScraper(BaseScraper):
         Returns:
             List[ContentItem]: Fetched content items
         """
-        items = []
-        sources = self.config["sources"]
+        return (await self.fetch_with_results(since)).items
 
-        for source in sources:
+    async def fetch_with_results(self, since: datetime) -> SourceFetchBatch:
+        items: List[ContentItem] = []
+        results = []
+        for source in self.config["sources"]:
             if not source.enabled:
                 continue
+            started_at = datetime.now(timezone.utc)
+            started_clock = perf_counter()
+            source_id = self._source_id(source)
+            error: Exception | None = None
+            source_items: List[ContentItem] = []
+            try:
+                if source.type == "user_events" and source.username:
+                    source_items = await self._fetch_user_events(
+                        source, since, raise_errors=True
+                    )
+                elif source.type == "repo_releases" and source.owner and source.repo:
+                    source_items = await self._fetch_repo_releases(
+                        source, since, raise_errors=True
+                    )
+                else:
+                    error = ValueError("Invalid GitHub source configuration")
+            except Exception as exc:
+                error = exc
+            discovery_url = None
+            if source.username:
+                discovery_url = f"https://github.com/{source.username}"
+            elif source.owner and source.repo:
+                discovery_url = f"https://github.com/{source.owner}/{source.repo}"
+            source_items = attach_source_provenance(
+                source_items,
+                source_id=source_id,
+                source_level=source.source_level,
+                discovery_url=discovery_url,
+            )
+            items.extend(source_items)
+            result = source_run_result(
+                source_id=source_id,
+                source_type=SourceType.GITHUB,
+                started_at=started_at,
+                started_clock=started_clock,
+                items=source_items,
+                error=error,
+            )
+            if error is not None and isinstance(error, ValueError):
+                result.error_code = SourceErrorCode.CONFIG
+            results.append(result)
+        return SourceFetchBatch(items=items, source_results=results)
 
-            if source.type == "user_events" and source.username:
-                user_items = await self._fetch_user_events(source, since)
-                items.extend(user_items)
-            elif source.type == "repo_releases" and source.owner and source.repo:
-                release_items = await self._fetch_repo_releases(source, since)
-                items.extend(release_items)
-
-        return items
+    @staticmethod
+    def _source_id(source: GitHubSourceConfig) -> str:
+        if source.source_id:
+            return source.source_id
+        material = f"{source.type}:{source.username or ''}:{source.owner or ''}:{source.repo or ''}"
+        return stable_source_id("github", material)
 
     async def _fetch_user_events(
         self,
         source: GitHubSourceConfig,
         since: datetime,
+        *,
+        raise_errors: bool = False,
     ) -> List[ContentItem]:
         """Fetch public events for a user.
 
@@ -107,8 +158,10 @@ class GitHubScraper(BaseScraper):
                 if item:
                     items.append(item)
 
-        except httpx.HTTPError as e:
+        except Exception as e:
             logger.warning("Error fetching GitHub events for %s: %s", source.username, e)
+            if raise_errors:
+                raise
 
         return items
 
@@ -172,6 +225,8 @@ class GitHubScraper(BaseScraper):
         self,
         source: GitHubSourceConfig,
         since: datetime,
+        *,
+        raise_errors: bool = False,
     ) -> List[ContentItem]:
         """Fetch releases for a repository.
 
@@ -216,7 +271,9 @@ class GitHubScraper(BaseScraper):
                 )
                 items.append(item)
 
-        except httpx.HTTPError as e:
+        except Exception as e:
             logger.warning("Error fetching releases for %s/%s: %s", owner, repo, e)
+            if raise_errors:
+                raise
 
         return items

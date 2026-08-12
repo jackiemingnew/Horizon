@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from datetime import datetime, timedelta, timezone
 
 import pytest
 
@@ -103,3 +104,27 @@ def test_list_runs_returns_desc_order(tmp_path: Path) -> None:
 
     assert runs[0]["run_id"] == "run-2"
     assert runs[1]["run_id"] == "run-1"
+
+
+def test_prune_runs_removes_only_expired_recorded_runs(tmp_path: Path) -> None:
+    store = RunStore(tmp_path)
+    old_id = store.create_run("run-old")
+    fresh_id = store.create_run("run-fresh")
+    old = (datetime.now(timezone.utc) - timedelta(days=15)).isoformat()
+    store.write_json(old_id, "meta.json", {"run_id": old_id, "created_at": old})
+    malformed = store.create_run("run-malformed")
+    store.write_json(malformed, "meta.json", {"run_id": malformed})
+
+    removed = store.prune_runs(older_than_days=14)
+
+    assert removed == [old_id]
+    assert not (tmp_path / old_id).exists()
+    assert (tmp_path / fresh_id).exists()
+    assert (tmp_path / malformed).exists()
+
+
+def test_prune_runs_rejects_non_positive_retention(tmp_path: Path) -> None:
+    store = RunStore(tmp_path)
+
+    with pytest.raises(ValueError, match="must be positive"):
+        store.prune_runs(older_than_days=0)

@@ -5,6 +5,7 @@ from src.models import SourcesConfig
 
 
 CATALOG_PATH = Path(__file__).parents[1] / "docs" / "data" / "source-catalog.json"
+V2_CONFIG_PATH = Path(__file__).parents[1] / "data" / "config.sources-v2.local.json"
 
 
 def load_catalog() -> dict:
@@ -84,3 +85,23 @@ def test_source_catalog_exports_valid_horizon_sources_config():
         "MachineLearning",
         "LocalLLaMA",
     }
+
+
+def test_v2_local_config_covers_the_catalog_with_explicit_provenance():
+    catalog = load_catalog()["sources"]
+    config = json.loads(V2_CONFIG_PATH.read_text(encoding="utf-8"))
+    parsed = SourcesConfig.model_validate(config["sources"])
+    configured = [
+        *parsed.github,
+        parsed.hackernews,
+        *parsed.rss,
+        *parsed.reddit.subreddits,
+        *parsed.reddit.users,
+        *parsed.telegram.channels,
+    ]
+
+    assert len(catalog) == 29
+    assert {entry.source_id for entry in configured} == {
+        source["id"] for source in catalog
+    }
+    assert all(entry.source_level is not None for entry in configured)

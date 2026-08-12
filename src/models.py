@@ -3,7 +3,87 @@
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Annotated, Literal, Optional, List, Dict, Any, Union
-from pydantic import BaseModel, HttpUrl, Field, field_validator
+import hashlib
+import re
+
+from pydantic import BaseModel, ConfigDict, HttpUrl, Field, field_validator, model_validator
+
+
+_SOURCE_ID_RE = re.compile(r"^[a-z0-9][a-z0-9._-]{0,127}$")
+_CREDENTIAL_QUERY_RE = re.compile(
+    r"(?i)(^|[?&\s])"
+    r"(api[_-]?key|key|access[_-]?token|token|sig(?:nature)?|auth|code|secret|password)"
+    r"=([^&#\s]*)"
+)
+_PROHIBITED_AUDIT_FIELD_KEYS = {
+    "accesskey",
+    "accesstoken",
+    "apikey",
+    "auth",
+    "authorization",
+    "body",
+    "clientsecret",
+    "code",
+    "completion",
+    "completiontext",
+    "content",
+    "cookie",
+    "credential",
+    "credentials",
+    "headers",
+    "inputtext",
+    "key",
+    "password",
+    "privatekey",
+    "prompt",
+    "requestbody",
+    "requestheaders",
+    "responsebody",
+    "responseheaders",
+    "secret",
+    "sig",
+    "signature",
+    "stacktrace",
+    "token",
+}
+
+
+def _validate_source_id(value: str) -> str:
+    if not isinstance(value, str) or not _SOURCE_ID_RE.fullmatch(value):
+        raise ValueError(
+            "source_id must match ^[a-z0-9][a-z0-9._-]{0,127}$"
+        )
+    return value
+
+
+def stable_source_id(prefix: str, material: str) -> str:
+    """Synthesize the same non-secret source ID used by runtime scrapers."""
+    safe_prefix = re.sub(r"[^a-z0-9._-]+", "-", prefix.lower()).strip("-._")
+    digest = hashlib.sha256(material.encode("utf-8")).hexdigest()[:12]
+    return f"{safe_prefix or 'source'}-{digest}"
+
+
+def _sanitize_error_message(value: str | None) -> str | None:
+    if value is None:
+        return None
+    # Error text is an audit field, never a traceback or a transport body.
+    value = re.sub(r"[\r\n\t]+", " ", str(value)).strip()
+    value = _CREDENTIAL_QUERY_RE.sub(
+        lambda match: f"{match.group(1)}{match.group(2)}=[REDACTED]",
+        value,
+    )
+    value = re.sub(
+        r"(?i)\bauthorization\s*:\s*[^,;]+",
+        "Authorization: [REDACTED]",
+        value,
+    )
+    value = re.sub(r"(?i)\bbearer\s+\S+", "Bearer [REDACTED]", value)
+    value = re.sub(
+        r"(?is)-----BEGIN [^-]*PRIVATE KEY-----.*?-----END [^-]*PRIVATE KEY-----",
+        "[REDACTED PRIVATE KEY]",
+        value,
+    )
+    return value[:240]
 
 
 class SourceType(str, Enum):
@@ -21,6 +101,269 @@ class SourceType(str, Enum):
     GOOGLE_NEWS = "google_news"
 
 
+class SourceLevel(str, Enum):
+    """Distance between a discovery channel and the original event."""
+
+    L1 = "L1"
+    L2 = "L2"
+    L3 = "L3"
+
+
+class ProfileStatus(str, Enum):
+    """Whether a source profile came from the registry or legacy input."""
+
+    KNOWN = "known"
+    CUSTOM = "custom"
+    MISSING = "missing"
+
+
+class VerificationStatus(str, Enum):
+    """Strength of the evidence resolved for a content item."""
+
+    DIRECT = "direct"
+    RESOLVED = "resolved"
+    CORROBORATED = "corroborated"
+    UNVERIFIED = "unverified"
+    NOT_APPLICABLE = "not_applicable"
+
+
+class SourceRunStatus(str, Enum):
+    """Outcome for one configured source invocation."""
+
+    SUCCESS = "success"
+    EMPTY = "empty"
+    PARTIAL = "partial"
+    FAILED = "failed"
+    SKIPPED = "skipped"
+
+
+class SourceErrorCode(str, Enum):
+    HTTP_403 = "HTTP_403"
+    HTTP_429 = "HTTP_429"
+    AUTH = "AUTH"
+    CONFIG = "CONFIG"
+    TIMEOUT = "TIMEOUT"
+    NETWORK = "NETWORK"
+    PARSE = "PARSE"
+    POLICY = "POLICY"
+    UNKNOWN = "UNKNOWN"
+
+
+class ContentProvenance(BaseModel):
+    """Additive provenance metadata for a :class:`ContentItem`."""
+
+    schema_version: Literal["1"] = "1"
+    discovery_source_id: str
+    discovery_url: HttpUrl | None = None
+    discovery_level: SourceLevel | None = None
+    profile_status: ProfileStatus = ProfileStatus.KNOWN
+    original_url: HttpUrl | None = None
+    original_domain: str | None = None
+    original_level: SourceLevel | None = None
+    verification_status: VerificationStatus = VerificationStatus.UNVERIFIED
+    evidence_urls: List[HttpUrl] = Field(default_factory=list, max_length=5)
+    resolved_at: datetime | None = None
+
+    _validate_discovery_source_id = field_validator("discovery_source_id")(
+        _validate_source_id
+    )
+
+    @field_validator("original_domain")
+    @classmethod
+    def _validate_original_domain(cls, value: str | None) -> str | None:
+        if value is None:
+            return None
+        normalized = value.strip().lower().rstrip(".")
+        if (
+            len(normalized) > 253
+            or not normalized
+            or any(
+                not label
+                or len(label) > 63
+                or not re.fullmatch(r"[a-z0-9](?:[a-z0-9-]*[a-z0-9])?", label)
+                for label in normalized.split(".")
+            )
+        ):
+            raise ValueError("original_domain must be a normalized DNS name")
+        return normalized
+
+    @model_validator(mode="after")
+    def _validate_provenance_consistency(self) -> "ContentProvenance":
+        urls = [self.discovery_url, self.original_url, *self.evidence_urls]
+        if any(
+            value is not None
+            and (value.scheme != "https" or value.username or value.password)
+            for value in urls
+        ):
+            raise ValueError("provenance URLs must be HTTPS without user-info")
+        if self.verification_status is VerificationStatus.DIRECT:
+            if self.discovery_level is not SourceLevel.L1:
+                raise ValueError("direct evidence requires an L1 discovery source")
+        if self.verification_status in {
+            VerificationStatus.RESOLVED,
+            VerificationStatus.CORROBORATED,
+        }:
+            if self.original_url is None or self.original_level is None:
+                raise ValueError(
+                    "resolved/corroborated evidence requires an original URL and level"
+                )
+        return self
+
+    @field_validator("evidence_urls")
+    @classmethod
+    def _unique_evidence_urls(cls, values: List[HttpUrl]) -> List[HttpUrl]:
+        # Preserve input order while ensuring the bounded list is unique.
+        result: List[HttpUrl] = []
+        seen: set[str] = set()
+        for value in values:
+            key = str(value)
+            if key not in seen:
+                seen.add(key)
+                result.append(value)
+        return result
+
+
+class SourceRunResult(BaseModel):
+    """Sanitized, structured outcome for one configured sub-source."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["1"] = "1"
+    source_id: str
+    source_type: SourceType
+    status: SourceRunStatus
+    item_count: int = Field(default=0, ge=0)
+    started_at: datetime
+    finished_at: datetime
+    latency_ms: int = Field(default=0, ge=0)
+    attempts: int = Field(default=1, ge=1)
+    fallback_used: str | None = Field(default=None, max_length=64)
+    error_code: SourceErrorCode | None = None
+    error_message: str | None = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
+    _sanitize_error = field_validator("error_message", mode="before")(
+        _sanitize_error_message
+    )
+
+    @model_validator(mode="after")
+    def _validate_run_window(self) -> "SourceRunResult":
+        if self.finished_at < self.started_at:
+            raise ValueError("finished_at cannot precede started_at")
+        return self
+
+
+class ModelCallRecord(BaseModel):
+    """Allowlisted model-call metadata; prompts and responses have no fields."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["1"] = "1"
+    call_id: str = Field(pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$")
+    provider: str = Field(min_length=1, max_length=64)
+    model: str = Field(min_length=1, max_length=128)
+    stage: str = Field(min_length=1, max_length=64)
+    item_id: str | None = Field(default=None, max_length=500)
+    status: Literal["ok", "failed", "blocked"]
+    error_code: str | None = Field(default=None, max_length=64)
+    attempts: int = Field(default=1, ge=1)
+    latency_ms: int = Field(ge=0)
+    input_tokens: int | None = Field(default=None, ge=0)
+    output_tokens: int | None = Field(default=None, ge=0)
+    total_tokens: int | None = Field(default=None, ge=0)
+    started_at: datetime
+    finished_at: datetime
+
+    @model_validator(mode="after")
+    def _validate_call_window(self) -> "ModelCallRecord":
+        if self.finished_at < self.started_at:
+            raise ValueError("finished_at cannot precede started_at")
+        if self.input_tokens is not None and self.output_tokens is not None:
+            calculated = self.input_tokens + self.output_tokens
+            if self.total_tokens is not None and self.total_tokens != calculated:
+                raise ValueError("total_tokens must equal input_tokens + output_tokens")
+        return self
+
+
+class AuditSourceCounts(BaseModel):
+    """Strict source-count shape for a safe run manifest."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    success: int = Field(default=0, ge=0)
+    empty: int = Field(default=0, ge=0)
+    partial: int = Field(default=0, ge=0)
+    failed: int = Field(default=0, ge=0)
+    skipped: int = Field(default=0, ge=0)
+
+
+class AuditTokenUsage(BaseModel):
+    """Aggregate token metadata; null means the provider did not expose it."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    input: int | None = Field(default=None, ge=0)
+    output: int | None = Field(default=None, ge=0)
+    total: int | None = Field(default=None, ge=0)
+
+    @model_validator(mode="after")
+    def _validate_total(self) -> "AuditTokenUsage":
+        if self.input is not None and self.output is not None and self.total is not None:
+            if self.total != self.input + self.output:
+                raise ValueError("total must equal input + output")
+        return self
+
+
+class AuditManifest(BaseModel):
+    """Strict, metadata-only manifest accepted by the safe exporter."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["1"] = "1"
+    run_id: str = Field(
+        min_length=1,
+        max_length=128,
+        pattern=r"^[A-Za-z0-9][A-Za-z0-9._-]*$",
+    )
+    status: Literal["complete", "partial", "empty", "failed"]
+    generated_at: datetime | None = None
+    healthy_source_ratio: float = Field(default=0.0, ge=0.0, le=1.0)
+    source_counts: AuditSourceCounts = Field(default_factory=AuditSourceCounts)
+    pipeline_counts: Dict[str, int] = Field(default_factory=dict)
+    failed_source_ids: List[str] = Field(default_factory=list, max_length=500)
+    failed_stages: List[str] = Field(default_factory=list, max_length=64)
+    token_usage: AuditTokenUsage | None = None
+
+    @field_validator("pipeline_counts")
+    @classmethod
+    def _validate_pipeline_counts(cls, values: Dict[str, int]) -> Dict[str, int]:
+        if len(values) > 64:
+            raise ValueError("pipeline_counts is too large")
+        for key, value in values.items():
+            if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", key) or value < 0:
+                raise ValueError(
+                    "pipeline_counts must contain safe non-negative counters"
+                )
+        return values
+
+    @field_validator("failed_source_ids")
+    @classmethod
+    def _validate_failed_source_ids(cls, values: List[str]) -> List[str]:
+        if len(values) != len(set(values)):
+            raise ValueError("failed_source_ids must be unique")
+        return [_validate_source_id(value) for value in values]
+
+    @field_validator("failed_stages")
+    @classmethod
+    def _validate_failed_stages(cls, values: List[str]) -> List[str]:
+        if len(values) != len(set(values)):
+            raise ValueError("failed_stages must be unique")
+        for value in values:
+            if not re.fullmatch(r"[a-z][a-z0-9_]{0,63}", value):
+                raise ValueError("failed_stages contains an invalid stage")
+        return values
+
+
 class ContentItem(BaseModel):
     """Unified content item model from any source."""
 
@@ -33,12 +376,221 @@ class ContentItem(BaseModel):
     published_at: datetime
     fetched_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     metadata: Dict[str, Any] = Field(default_factory=dict)
+    provenance: Optional[ContentProvenance] = None
 
     # AI analysis results
     ai_score: Optional[float] = None  # 0-10 importance score
     ai_reason: Optional[str] = None
     ai_summary: Optional[str] = None
     ai_tags: List[str] = Field(default_factory=list)
+
+
+class DecisionStatus(str, Enum):
+    SELECTED = "selected"
+    REJECTED = "rejected"
+
+
+class DecisionReasonCode(str, Enum):
+    SOURCE_CANDIDATE_CAP = "SOURCE_CANDIDATE_CAP"
+    DUPLICATE_CANONICAL_URL = "DUPLICATE_CANONICAL_URL"
+    DUPLICATE_PRIOR_EVENT = "DUPLICATE_PRIOR_EVENT"
+    BELOW_AI_THRESHOLD = "BELOW_AI_THRESHOLD"
+    MODEL_ANALYSIS_FAILED = "MODEL_ANALYSIS_FAILED"
+    TOPIC_DUPLICATE = "TOPIC_DUPLICATE"
+    L3_ONLY_LIMIT = "L3_ONLY_LIMIT"
+    DISCOVERY_CHANNEL_LIMIT = "DISCOVERY_CHANNEL_LIMIT"
+    CATEGORY_LIMIT = "CATEGORY_LIMIT"
+    GLOBAL_ITEM_LIMIT = "GLOBAL_ITEM_LIMIT"
+    SELECTED_VERIFIED_ORIGINAL = "SELECTED_VERIFIED_ORIGINAL"
+    SELECTED_ANALYSIS = "SELECTED_ANALYSIS"
+    SELECTED_DISCOVERY = "SELECTED_DISCOVERY"
+    PROFILE_MISSING = "PROFILE_MISSING"
+    MATERIAL_UPDATE = "MATERIAL_UPDATE"
+
+
+DecisionScalar = Union[str, int, float, bool, None]
+
+
+def _validate_policy_values(
+    values: Dict[str, Any]
+) -> Dict[str, Any]:
+    """Keep decision records to JSON scalars or lists of strings only."""
+
+    if not isinstance(values, dict):
+        raise ValueError("policy_values must be an object")
+    if len(values) > 32:
+        raise ValueError("policy_values is too large")
+    clean: Dict[str, Any] = {}
+    for key, value in values.items():
+        if not isinstance(key, str) or len(key) > 64:
+            raise ValueError("policy_values keys must be strings")
+        normalized_key = re.sub(r"[^a-z0-9]", "", key.lower())
+        if normalized_key in _PROHIBITED_AUDIT_FIELD_KEYS:
+            raise ValueError("policy_values contains a prohibited audit field")
+        if isinstance(value, list):
+            if len(value) > 32 or not all(
+                isinstance(entry, str) and len(entry) <= 1000 for entry in value
+            ):
+                raise ValueError("policy_values lists may only contain strings")
+            if any(_CREDENTIAL_QUERY_RE.search(entry) for entry in value):
+                raise ValueError("policy_values contains credential-like text")
+            clean[key] = list(value)
+        elif value is not None and not isinstance(value, (str, int, float, bool)):
+            raise ValueError("policy_values values must be JSON scalars or string lists")
+        elif isinstance(value, str):
+            if len(value) > 1000:
+                raise ValueError("policy_values strings are too long")
+            if _CREDENTIAL_QUERY_RE.search(value):
+                raise ValueError("policy_values contains credential-like text")
+            clean[key] = value
+        else:
+            clean[key] = value
+    return clean
+
+
+class DecisionRecord(BaseModel):
+    """One deterministic accept/reject decision for one item."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    schema_version: Literal["1"] = "1"
+    item_id: str = Field(max_length=500)
+    status: DecisionStatus
+    stage: str = Field(min_length=1, max_length=64)
+    reason_code: DecisionReasonCode
+    reason: str = Field(min_length=1, max_length=1000)
+    title: str | None = Field(default=None, max_length=500)
+    url: HttpUrl | None = None
+    ai_score: float | None = Field(default=None, ge=0, le=10)
+    source_id: str | None = None
+    source_level: SourceLevel | None = None
+    verification_status: VerificationStatus | None = None
+    policy_values: Dict[str, Any] = Field(default_factory=dict)
+    prior_event_id: str | None = Field(default=None, max_length=500)
+
+    _validate_policy_values_field = field_validator("policy_values")(
+        _validate_policy_values
+    )
+
+    @field_validator("source_id")
+    @classmethod
+    def _validate_optional_source_id(cls, value: str | None) -> str | None:
+        return _validate_source_id(value) if value is not None else None
+
+    @field_validator("url")
+    @classmethod
+    def _validate_public_url(cls, value: HttpUrl | None) -> HttpUrl | None:
+        if value is None:
+            return None
+        if value.scheme != "https" or value.username or value.password:
+            raise ValueError("public decision URLs must be HTTPS without user-info")
+        return value
+
+
+class CandidateLimitsPolicy(BaseModel):
+    default_per_source: int = Field(default=5, gt=0)
+    max_candidates_before_ai: int = Field(default=60, gt=0)
+    overrides: Dict[str, int] = Field(default_factory=dict)
+
+    @field_validator("overrides")
+    @classmethod
+    def _validate_overrides(cls, values: Dict[str, int]) -> Dict[str, int]:
+        for source_id, cap in values.items():
+            _validate_source_id(source_id)
+            if cap <= 0:
+                raise ValueError("candidate source caps must be positive")
+        return values
+
+
+class ProvenancePolicy(BaseModel):
+    resolve_l3_original: bool = True
+    max_evidence_urls: int = Field(default=5, ge=0, le=5)
+
+
+class ChannelGroupLimit(BaseModel):
+    source_ids: List[str] = Field(min_length=1)
+    max_items: int = Field(gt=0)
+
+    @field_validator("source_ids")
+    @classmethod
+    def _unique_source_ids(cls, values: List[str]) -> List[str]:
+        if len(values) != len(set(values)):
+            raise ValueError("channel group source_ids must be unique")
+        for source_id in values:
+            _validate_source_id(source_id)
+        return values
+
+
+class SelectionPolicy(BaseModel):
+    max_items: int = Field(default=10, gt=0)
+    target_verified_original_items: int = Field(default=5, ge=0)
+    max_l3_only_items: int = Field(default=2, ge=0)
+    default_max_items_per_discovery_source: int = Field(default=3, gt=0)
+    channel_group_limits: Dict[str, ChannelGroupLimit] = Field(default_factory=dict)
+    default_max_items_per_category: int = Field(default=4, gt=0)
+
+    @model_validator(mode="after")
+    def _validate_selection_bounds(self) -> "SelectionPolicy":
+        if self.target_verified_original_items > self.max_items:
+            raise ValueError("target_verified_original_items cannot exceed max_items")
+        if self.max_l3_only_items > self.max_items:
+            raise ValueError("max_l3_only_items cannot exceed max_items")
+        for group_name, group in self.channel_group_limits.items():
+            if not group_name or not isinstance(group_name, str):
+                raise ValueError("channel group names must be non-empty strings")
+            if group.max_items > self.max_items:
+                raise ValueError("channel group max_items cannot exceed max_items")
+        return self
+
+
+class DeduplicationPolicy(BaseModel):
+    history_days: int = Field(default=7, gt=0)
+    allow_material_updates: bool = True
+
+
+class RunHealthPolicy(BaseModel):
+    required_source_ids: List[str] = Field(default_factory=list)
+    min_healthy_source_ratio: float = Field(default=0.50, ge=0.0, le=1.0)
+
+    @field_validator("required_source_ids")
+    @classmethod
+    def _validate_required_ids(cls, values: List[str]) -> List[str]:
+        if len(values) != len(set(values)):
+            raise ValueError("required_source_ids must be unique")
+        for source_id in values:
+            _validate_source_id(source_id)
+        return values
+
+
+class QualityPolicy(BaseModel):
+    """Optional deterministic V2 policy; disabled retains legacy behavior."""
+
+    enabled: bool = False
+    candidate_limits: CandidateLimitsPolicy = Field(default_factory=CandidateLimitsPolicy)
+    provenance: ProvenancePolicy = Field(default_factory=ProvenancePolicy)
+    selection: SelectionPolicy = Field(default_factory=SelectionPolicy)
+    deduplication: DeduplicationPolicy = Field(default_factory=DeduplicationPolicy)
+    run_health: RunHealthPolicy = Field(default_factory=RunHealthPolicy)
+
+    def validate_source_references(self, enabled_source_ids: set[str]) -> "QualityPolicy":
+        """Validate policy IDs against a configured source set.
+
+        Keeping this check explicit lets callers use a policy as a standalone
+        value while ``Config`` enforces it when the enabled source registry is
+        available.
+        """
+
+        references = set(self.candidate_limits.overrides)
+        references.update(self.run_health.required_source_ids)
+        for group in self.selection.channel_group_limits.values():
+            references.update(group.source_ids)
+        unknown = sorted(references - enabled_source_ids)
+        if unknown:
+            raise ValueError(
+                "quality_policy references unknown or disabled source IDs: "
+                + ", ".join(unknown)
+            )
+        return self
 
 
 class AIProvider(str, Enum):
@@ -124,6 +676,10 @@ class GitHubSourceConfig(BaseModel):
     repo: Optional[str] = None
     enabled: bool = True
     category: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class HackerNewsConfig(BaseModel):
@@ -133,6 +689,10 @@ class HackerNewsConfig(BaseModel):
     fetch_top_stories: int = 30
     min_score: int = 100
     category: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class ExtractorType(str, Enum):
@@ -159,6 +719,10 @@ class RSSSourceConfig(BaseModel):
     enabled: bool = True
     category: Optional[str] = None
     content_extractor: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class RedditSubredditConfig(BaseModel):
@@ -173,6 +737,10 @@ class RedditSubredditConfig(BaseModel):
     fetch_limit: int = 25
     min_score: int = 10
     category: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class RedditUserConfig(BaseModel):
@@ -183,6 +751,10 @@ class RedditUserConfig(BaseModel):
     sort: str = "new"
     fetch_limit: int = 10
     category: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class RedditConfig(BaseModel):
@@ -201,6 +773,10 @@ class TelegramChannelConfig(BaseModel):
     enabled: bool = True
     fetch_limit: int = 20
     category: Optional[str] = None
+    source_id: Optional[str] = None
+    source_level: Optional[SourceLevel] = None
+
+    _validate_source_id_field = field_validator("source_id")(_validate_source_id)
 
 
 class TelegramConfig(BaseModel):
@@ -452,6 +1028,49 @@ class Config(BaseModel):
     ai: AIConfig
     sources: SourcesConfig
     filtering: FilteringConfig
+    quality_policy: Optional[QualityPolicy] = None
     extractors: Dict[str, ExtractorConfig] = Field(default_factory=dict)
     email: Optional[EmailConfig] = None
     webhook: Optional[WebhookConfig] = None
+
+    @model_validator(mode="after")
+    def _validate_quality_source_references(self) -> "Config":
+        if self.quality_policy is None or not self.quality_policy.enabled:
+            return self
+        source_ids: set[str] = set()
+        for source in self.sources.github:
+            if source.enabled:
+                material = (
+                    f"{source.type}:{source.username or ''}:"
+                    f"{source.owner or ''}:{source.repo or ''}"
+                )
+                source_ids.add(
+                    source.source_id or stable_source_id("github", material)
+                )
+        if self.sources.hackernews.enabled:
+            source_ids.add(self.sources.hackernews.source_id or "hacker-news")
+        for source in self.sources.rss:
+            if source.enabled:
+                source_ids.add(
+                    source.source_id or stable_source_id("rss", str(source.url))
+                )
+        if self.sources.reddit.enabled:
+            for source in (*self.sources.reddit.subreddits, *self.sources.reddit.users):
+                if not source.enabled:
+                    continue
+                if isinstance(source, RedditSubredditConfig):
+                    material = f"subreddit:{source.subreddit}"
+                else:
+                    material = f"user:{source.username}"
+                source_ids.add(
+                    source.source_id or stable_source_id("reddit", material)
+                )
+        if self.sources.telegram.enabled:
+            for source in self.sources.telegram.channels:
+                if source.enabled:
+                    source_ids.add(
+                        source.source_id
+                        or stable_source_id("telegram", source.channel)
+                    )
+        self.quality_policy.validate_source_references(source_ids)
+        return self

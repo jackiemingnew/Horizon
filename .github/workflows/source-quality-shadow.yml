@@ -1,0 +1,70 @@
+name: Horizon Source Quality V2 Shadow
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  source-quality-shadow:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      HORIZON_RUN_ID: shadow-${{ github.run_id }}-${{ github.run_attempt }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6
+        with:
+          version: "0.11.29"
+
+      - name: Install locked dependencies
+        run: uv sync --extra dev --frozen
+
+      - name: Verify source-quality and audit contracts
+        run: >-
+          uv run pytest -q
+          tests/test_source_quality_models.py
+          tests/test_source_quality_policy.py
+          tests/test_source_health.py
+          tests/test_public_audit.py
+          tests/test_source_quality_cli.py
+          tests/test_model_audit.py
+          tests/test_enricher_status.py
+          tests/test_source_catalog.py
+
+      - name: Run 29-source shadow digest without Pages
+        env:
+          DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
+          GITHUB_TOKEN: ${{ github.token }}
+        run: >-
+          uv run horizon
+          --config data/config.sources-v2.local.json
+          --hours 24
+          --save-stages
+          --run-id "${HORIZON_RUN_ID}"
+          --no-pages
+
+      - name: Export allowlisted audit bundle
+        if: always()
+        run: >-
+          uv run horizon-audit-export
+          --run-dir "data/runs/${HORIZON_RUN_ID}"
+          --output .source-quality-safe
+
+      - name: Upload safe audit only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: horizon-source-quality-${{ env.HORIZON_RUN_ID }}
+          path: .source-quality-safe
+          if-no-files-found: error
+          retention-days: 14

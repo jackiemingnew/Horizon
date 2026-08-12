@@ -2,6 +2,7 @@
 
 import argparse
 import asyncio
+from datetime import datetime, timezone
 import sys
 from pathlib import Path
 
@@ -9,10 +10,43 @@ from dotenv import load_dotenv
 from rich.console import Console
 
 from .storage.manager import ConfigError, StorageManager
-from .orchestrator import HorizonOrchestrator
+from .orchestrator import HorizonOrchestrator, SourceQualityRunError
+from .mcp.run_store import RunStore
 
 
 console = Console()
+
+
+def _persist_configuration_failure(
+    artifact_store: RunStore | None,
+    run_id: str | None,
+) -> None:
+    """Write the safe V2 failure envelope without echoing validation details."""
+    if artifact_store is None or run_id is None:
+        return
+    manifest = {
+        "schema_version": "1",
+        "run_id": run_id,
+        "status": "failed",
+        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "healthy_source_ratio": 0.0,
+        "source_counts": {
+            "success": 0,
+            "empty": 0,
+            "partial": 0,
+            "failed": 0,
+            "skipped": 0,
+        },
+        "pipeline_counts": {},
+        "failed_source_ids": [],
+        "failed_stages": ["configuration"],
+        "token_usage": None,
+    }
+    artifact_store.save_source_health(run_id, [])
+    artifact_store.save_decisions(run_id, [])
+    artifact_store.save_model_calls(run_id, [])
+    artifact_store.save_manifest(run_id, manifest)
+    artifact_store.update_meta(run_id, manifest)
 
 
 def print_banner():
@@ -31,13 +65,34 @@ def print_banner():
     console.print(banner)
 
 
+def build_parser() -> argparse.ArgumentParser:
+    """Build the backward-compatible CLI parser."""
+    parser = argparse.ArgumentParser(description="Horizon - AI-Driven Information Aggregation System")
+    parser.add_argument("--hours", type=int, help="Force fetch from last N hours")
+    parser.add_argument(
+        "--config", type=Path, help="Load a config file instead of data/config.json"
+    )
+    parser.add_argument(
+        "--save-stages",
+        action="store_true",
+        help="Persist local pipeline stages and the V2 audit contract under data/runs/",
+    )
+    parser.add_argument(
+        "--run-id", help="Use an explicit safe run ID for reproducible automation"
+    )
+    parser.add_argument(
+        "--no-pages",
+        action="store_true",
+        help="Do not write docs/_posts; useful for local and CI shadow runs",
+    )
+    return parser
+
+
 def main():
     """Main CLI entry point."""
     print_banner()
 
-    parser = argparse.ArgumentParser(description="Horizon - AI-Driven Information Aggregation System")
-    parser.add_argument("--hours", type=int, help="Force fetch from last N hours")
-    args = parser.parse_args()
+    args = build_parser().parse_args()
 
     try:
         # Load environment variables from .env file
@@ -48,11 +103,27 @@ def main():
 
         # Initialize storage manager
         storage = StorageManager(data_dir=str(data_dir))
+        if args.config is not None:
+            storage.config_path = args.config
+        artifact_store = RunStore(data_dir / "runs") if args.save_stages else None
+        run_id = args.run_id
+        if artifact_store is not None:
+            removed_runs = artifact_store.prune_runs(older_than_days=14)
+            if removed_runs:
+                console.print(
+                    f"[dim]Pruned {len(removed_runs)} local run(s) older than 14 days.[/dim]"
+                )
+            run_id = artifact_store.create_run(run_id)
+            console.print(
+                f"[cyan]Local run artifacts:[/cyan] "
+                f"{artifact_store.run_dir(run_id).resolve()}\n"
+            )
 
         # Load configuration
         try:
             config = storage.load_config()
         except FileNotFoundError:
+            _persist_configuration_failure(artifact_store, run_id)
             console.print("[bold red]❌ Configuration file not found![/bold red]\n")
             data_dir_path = data_dir if isinstance(data_dir, Path) else Path(data_dir)
             example_path = data_dir_path / "config.example.json"
@@ -64,21 +135,49 @@ def main():
             console.print(
                 "Or run [bold cyan]uv run horizon-wizard[/bold cyan] to launch the interactive setup wizard.\n"
             )
-            sys.exit(1)
+            sys.exit(2 if artifact_store is not None else 1)
         except ConfigError as e:
+            _persist_configuration_failure(artifact_store, run_id)
             console.print(f"[bold red]❌ Error loading configuration: {e}[/bold red]")
-            sys.exit(1)
+            sys.exit(2 if artifact_store is not None else 1)
         except Exception as e:
+            _persist_configuration_failure(artifact_store, run_id)
             console.print(f"[bold red]❌ Error loading configuration: {e}[/bold red]")
-            sys.exit(1)
+            sys.exit(2 if artifact_store is not None else 1)
 
         # Create and run orchestrator
         orchestrator = HorizonOrchestrator(config, storage)
-        asyncio.run(orchestrator.run(force_hours=args.hours))
+        outcome = asyncio.run(
+            orchestrator.run(
+                force_hours=args.hours,
+                artifact_store=artifact_store,
+                artifact_run_id=run_id,
+                publish_pages=not args.no_pages,
+            )
+        )
+        if outcome is not None and outcome.status == "partial":
+            failed = [
+                result.source_id
+                for result in outcome.source_results
+                if result.status.value in {"failed", "partial"}
+            ]
+            console.print(
+                "[yellow]::warning::Horizon V2 completed partially; failed sources: "
+                + ", ".join(failed)
+                + "[/yellow]"
+            )
+        elif outcome is not None and outcome.status == "empty":
+            console.print(
+                "[yellow]::warning::Horizon V2 completed with an empty digest; "
+                "all enabled sources were healthy.[/yellow]"
+            )
 
     except KeyboardInterrupt:
         console.print("\n[yellow]⚠️  Interrupted by user[/yellow]")
         sys.exit(0)
+    except SourceQualityRunError as e:
+        console.print(f"\n[bold red]❌ {e}[/bold red]")
+        sys.exit(e.exit_code)
     except Exception as e:
         console.print(f"\n[bold red]❌ Fatal error: {e}[/bold red]")
         import traceback

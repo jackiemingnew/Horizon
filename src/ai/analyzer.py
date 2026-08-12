@@ -18,8 +18,18 @@ DEFAULT_THROTTLE_SEC = 0.0
 class ContentAnalyzer:
     """Analyzes content items using AI to determine importance."""
 
-    def __init__(self, ai_client: AIClient):
+    def __init__(self, ai_client: AIClient, *, failure_score: float | None = 0.0):
         self.client = ai_client
+        self.failure_score = failure_score
+
+    @staticmethod
+    def _mark_failed(item: ContentItem, reason: str, failure_score: float | None) -> None:
+        """Keep legacy score-zero behavior optional while exposing typed failure."""
+        item.ai_score = failure_score
+        item.ai_reason = reason
+        item.ai_summary = item.title
+        item.ai_tags = []
+        item.metadata["ai_status"] = "failed"
 
     @staticmethod
     def _parse_json_response(response: str) -> Optional[dict]:
@@ -52,9 +62,7 @@ class ContentAnalyzer:
                     await self._analyze_item(item)
                 except Exception as e:
                     print(f"Error analyzing item {item.id}: {e}")
-                    item.ai_score = 0.0
-                    item.ai_reason = "Analysis failed"
-                    item.ai_summary = item.title
+                    self._mark_failed(item, "Analysis failed", self.failure_score)
                 if throttle_sec > 0 and index < len(items) - 1:
                     await asyncio.sleep(throttle_sec)
             progress.advance(progress_task)
@@ -140,7 +148,12 @@ class ContentAnalyzer:
         )
 
         # Get AI completion
-        response = await self.client.complete(
+        client = (
+            self.client.for_item(str(item.id))
+            if hasattr(self.client, "for_item")
+            else self.client
+        )
+        response = await client.complete(
             system=CONTENT_ANALYSIS_SYSTEM,
             user=user_prompt,
         )
@@ -149,10 +162,11 @@ class ContentAnalyzer:
         result = self._parse_json_response(response)
         if result is None:
             print(f"Warning: could not parse analysis response for {item.id}, using defaults")
-            item.ai_score = 0.0
-            item.ai_reason = "Analysis response parse failed"
-            item.ai_summary = item.title
-            item.ai_tags = []
+            self._mark_failed(
+                item,
+                "Analysis response parse failed",
+                self.failure_score,
+            )
             return
 
         # Update item with analysis results
@@ -160,3 +174,4 @@ class ContentAnalyzer:
         item.ai_reason = result.get("reason", "")
         item.ai_summary = result.get("summary", item.title)
         item.ai_tags = result.get("tags", [])
+        item.metadata["ai_status"] = "ok"
