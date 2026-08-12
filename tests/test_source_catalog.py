@@ -105,3 +105,36 @@ def test_v2_local_config_covers_the_catalog_with_explicit_provenance():
         source["id"] for source in catalog
     }
     assert all(entry.source_level is not None for entry in configured)
+
+
+def test_unhealthy_sources_remain_cataloged_but_are_disabled_in_runtime_profiles():
+    config = json.loads(V2_CONFIG_PATH.read_text(encoding="utf-8"))
+    parsed = SourcesConfig.model_validate(config["sources"])
+    configured = [
+        *parsed.github,
+        parsed.hackernews,
+        *parsed.rss,
+        *parsed.reddit.subreddits,
+        *parsed.reddit.users,
+        *parsed.telegram.channels,
+    ]
+    by_source_id = {entry.source_id: entry for entry in configured}
+
+    disabled_source_ids = {
+        "mit-ai-news",
+        "linux-do-top",
+        "reddit-local-llama",
+    }
+    assert all(by_source_id[source_id].enabled is False for source_id in disabled_source_ids)
+    assert sum(entry.enabled for entry in configured) == 26
+
+    production = json.loads(
+        (Path(__file__).parents[1] / "data" / "config.github.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    production_reddit = {
+        entry["subreddit"]: entry
+        for entry in production["sources"]["reddit"]["subreddits"]
+    }
+    assert production_reddit["LocalLLaMA"]["enabled"] is False

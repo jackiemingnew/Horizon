@@ -85,7 +85,7 @@
         },
         {
           "subreddit": "LocalLLaMA",
-          "enabled": true,
+          "enabled": false,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 10,

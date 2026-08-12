@@ -41,7 +41,7 @@ jobs:
           tests/test_enricher_status.py
           tests/test_source_catalog.py
 
-      - name: Run 29-source shadow digest without Pages
+      - name: Run 26-enabled-source shadow digest without Pages
         env:
           DEEPSEEK_API_KEY: ${{ secrets.DEEPSEEK_API_KEY }}
           GITHUB_TOKEN: ${{ github.token }}

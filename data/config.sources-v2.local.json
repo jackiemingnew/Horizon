@@ -53,7 +53,7 @@
       {
         "name": "MIT News - AI",
         "url": "https://news.mit.edu/topic/mitartificial-intelligence2-rss.xml",
-        "enabled": true,
+        "enabled": false,
         "category": "ai-research",
         "source_id": "mit-ai-news",
         "source_level": "L1"
@@ -213,7 +213,7 @@
       {
         "name": "Linux.DO Top",
         "url": "https://linux.do/top.rss",
-        "enabled": true,
+        "enabled": false,
         "category": "cn-community",
         "source_id": "linux-do-top",
         "source_level": "L3"
@@ -243,7 +243,7 @@
         },
         {
           "subreddit": "LocalLLaMA",
-          "enabled": true,
+          "enabled": false,
           "sort": "hot",
           "time_filter": "day",
           "fetch_limit": 10,
@@ -282,9 +282,7 @@
       "overrides": {
         "hacker-news": 15,
         "telegram-zaihuapd": 8,
-        "reddit-machine-learning": 5,
-        "reddit-local-llama": 5,
-        "linux-do-top": 5
+        "reddit-machine-learning": 5
       }
     },
     "provenance": {

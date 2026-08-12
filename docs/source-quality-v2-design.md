@@ -436,7 +436,7 @@ Model analysis failures exclude only affected items and are not converted into o
 
 The experiment uses a clean worktree and does not modify the current dirty checkout.
 
-1. Use the tracked `data/config.sources-v2.local.json`, which covers the 29-source catalog with explicit source IDs and levels.
+1. Use the tracked `data/config.sources-v2.local.json`, which covers the 29-source catalog with explicit source IDs and levels. Its runtime profile currently enables 26 sources; `mit-ai-news`, `linux-do-top`, and `reddit-local-llama` remain cataloged but disabled after repeated hosted-runner access failures.
 2. Fetch the superset once per window and save an immutable fetched snapshot.
 3. Replay each same snapshot through:
    - control: current threshold/dedup/balancing;
