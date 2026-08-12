@@ -244,7 +244,9 @@ def test_shadow_workflow_is_read_only_and_uploads_only_safe_bundle() -> None:
     assert "contents: read" in workflow
     assert "contents: write" not in workflow
     assert "retention-days: 14" in workflow
-    assert "path: .source-quality-safe" in workflow
+    assert "path: source-quality-safe" in workflow
+    assert "path: .source-quality-safe" not in workflow
+    assert "include-hidden-files: true" not in workflow
     assert "path: data/runs" not in workflow
     assert "peaceiris/actions-gh-pages" not in workflow
     assert "schedule:" not in workflow

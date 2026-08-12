@@ -66,13 +66,13 @@ jobs:
         run: >-
           uv run horizon-audit-export
           --run-dir "data/runs/${HORIZON_RUN_ID}"
-          --output .source-quality-safe
+          --output source-quality-safe
 
       - name: Upload safe audit only
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: horizon-source-quality-${{ env.HORIZON_RUN_ID }}
-          path: .source-quality-safe
+          path: source-quality-safe
           if-no-files-found: error
           retention-days: 14

@@ -519,7 +519,7 @@ uv run horizon \
 
 uv run horizon-audit-export \
   --run-dir data/runs/local-v2-YYYYMMDD \
-  --output .source-quality-safe
+  --output source-quality-safe
 ```
 
 Still required before changing the existing daily workflow:
