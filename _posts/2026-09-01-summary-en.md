@@ -5,142 +5,262 @@ date: 2026-09-01
 lang: en
 ---
 
-> From 37 items, 6 important content pieces were selected
+> From 44 items, 11 important content pieces were selected
 
 ---
 
-1. [Tim Cook Steps Down as Apple CEO; John Ternus Takes Over to Focus on AI](#item-1) ⭐️ 9.0/10
-2. [Google Removes MV2 Extensions, Including uBlock Origin, from Chrome Web Store](#item-2) ⭐️ 8.0/10
-3. [NAT: The Original Sin of Internet Centralization?](#item-3) ⭐️ 8.0/10
-4. [Sliding-window attention with sinks outperforms linear attention on long-context reasoning](#item-4) ⭐️ 8.0/10
-5. [OpenClaw 2.0 Delivers Largest Update Ever with 16,000 Pull Requests](#item-5) ⭐️ 8.0/10
-6. [DeepSeek Releases V4-Flash-Vision-Exp, First Multimodal Model in V4 Family](#item-6) ⭐️ 8.0/10
+1. [Anthropic launches Claude Fable 5.1 and Mythos 5.1 with better writing, cheaper cache reads](#item-1) ⭐️ 9.0/10
+2. [Google Play Blocks AnkiDroid Link to Open Collective Donations](#item-2) ⭐️ 8.0/10
+3. [Jujutsu creator Martin von Zweigbergk joins ERSC](#item-3) ⭐️ 8.0/10
+4. [Small Transformer Trained in 1.5 Hours Beats Many LLMs on ARC Benchmark](#item-4) ⭐️ 8.0/10
+5. [Apple reveals forensic evidence in OpenAI trade-secret lawsuit](#item-5) ⭐️ 8.0/10
+6. [Python 3.15.0 Release Candidate 2 Announced, Final Phase Before October Release](#item-6) ⭐️ 8.0/10
+7. [Wrapture: New Python Library Unifies Tracing and Testing via Monkeypatching](#item-7) ⭐️ 8.0/10
+8. [Korea's Trillion-Dollar Sovereign AI Push: Nvidia Gains, Hynix Loses](#item-8) ⭐️ 8.0/10
+9. [2026 Latent Reasoning Landscape Maps BDH-CQ, HRM/TRM, Coconut](#item-9) ⭐️ 8.0/10
+10. [EvoUndo: Verifying Recoverability of LLM Agent Self-Evolution](#item-10) ⭐️ 8.0/10
+11. [Virtualizor Update Infrastructure BGP-Hijacked; Root Backdoor Installed via Malicious Updates](#item-11) ⭐️ 8.0/10
 
 ---
 
 <a id="item-1"></a>
-## [Tim Cook Steps Down as Apple CEO; John Ternus Takes Over to Focus on AI](https://www.bloomberg.com/news/articles/2026-08-30/apple-s-new-ceo-john-ternus-takes-reins-from-tim-cook-focusing-on-ai) ⭐️ 9.0/10
+## [Anthropic launches Claude Fable 5.1 and Mythos 5.1 with better writing, cheaper cache reads](https://www.anthropic.com/claude-fable-and-mythos-5-1) ⭐️ 9.0/10
 
-Tim Cook stepped down as Apple CEO on August 31, with John Ternus taking over on September 1. Ternus, a 51-year-old hardware engineering veteran, will prioritize shipping AI features, including the delayed Siri upgrade, and Apple plans to unveil its first foldable iPhone at the September 9 event. The leadership change marks a strategic pivot at one of the world's most influential technology companies, making AI the centerpiece of Apple's roadmap. The foldable iPhone would open a major new product category, while the transition could reshape how Apple competes in generative AI. According to the report, the first foldable iPhone will have 12GB of RAM and deep Siri AI integration that combines screen, calendar, and camera data to understand real-world scenes. Tim Cook will remain executive chairman, ensuring continuity during the transition.
+Anthropic has released Claude Fable 5.1 and Claude Mythos 5.1, the latest additions to its Claude model family. The new models bring improved writing quality, lower cache read pricing, and progress in scientific reasoning capabilities. This release sharpens Anthropic's competitive edge in the LLM market by reducing inference costs through a 75% cut in cache read pricing, which may pressure other providers. It also signals continued focus on long-running agentic tasks and scientific domains, potentially broadening adoption in enterprise and research settings. The price cut comes specifically from cache read pricing falling from $1/M to $0.25/M, making Fable 5.1's cache reads half the cost of Opus's $0.5/M. The release also includes three breaking changes that appear to patch inadvertent chain-of-thought disclosure, and the accompanying system card details safety evaluations.
 
-telegram · zaihuapd · Aug 31, 10:21
+hackernews · denysvitali · Sep 1, 17:53 · [Discussion](https://news.ycombinator.com/item?id=49525378)
 
-**Background**: Apple is one of the largest and most influential technology companies, known for iPhone, Mac, and services. A CEO transition is rare for Apple, and this one comes as the industry races to adopt AI, with Siri having fallen behind rivals in generative AI features.
+**Background**: Claude Mythos is Anthropic's most powerful series of large language models; Claude Fable is a 'Mythos-class' model released publicly with added safeguards, while Mythos itself remains restricted-access. According to industry estimates, Mythos has roughly 8 trillion parameters and Fable 5 around 5 trillion. A system card is a structured document that discloses an AI system's architecture, safeguards, and safety evaluations.
 
-**Tags**: `#Apple`, `#CEO transition`, `#Artificial Intelligence`, `#Tim Cook`, `#John Ternus`
+<details><summary>References</summary>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Claude_Fable_5">Claude Fable 5</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Claude_Mythos">Claude Mythos</a></li>
+<li><a href="https://platform.claude.com/docs/en/models/fable-5-1/whats-new-fable-5-1">What's new in Claude Fable 5.1 - Claude Platform Docs</a></li>
+
+</ul>
+</details>
+
+**Discussion**: Community reactions are largely positive. An Anthropic insider praised Fable 5.1's writing style as more natural and responsive to instructions, and highlighted anticipated gains in science. Another user noted that without Terminal-Bench-Science results, improvements in other benchmarks appear limited, while others discussed the pricing dynamics and the three breaking changes as fixes for chain-of-thought leaks.
+
+**Tags**: `#AI`, `#LLM`, `#Anthropic`, `#Claude`, `#Model Release`
 
 ---
 
 <a id="item-2"></a>
-## [Google Removes MV2 Extensions, Including uBlock Origin, from Chrome Web Store](https://webiterate.dev/google-removed-extensions-ublock-origin-108/) ⭐️ 8.0/10
+## [Google Play Blocks AnkiDroid Link to Open Collective Donations](https://github.com/ankidroid/Anki-Android/issues/21656) ⭐️ 8.0/10
 
-Google has removed all remaining Manifest V2 extensions from the Chrome Web Store, including the popular ad blocker uBlock Origin. This marks the completion of the transition to Manifest V3, which was announced years ago. This change affects millions of users who rely on powerful MV2 ad blockers like uBlock Origin, potentially making them more vulnerable to intrusive ads and malicious content. It also raises concerns about Google's control over the web and the future of ad-blocking technology in Chromium-based browsers. Manifest V3 replaces the long-lived background pages of MV2 with service workers and restricts remote code execution, which limits the filtering capabilities of extensions. While uBlock Origin has a MV3 version called uBlock Origin Lite, it uses declarativeNetRequest rules that are less flexible than the full blocking engine available in Firefox.
+AnkiDroid, a popular open-source flashcard app, reported that Google Play is no longer allowing it to link to its Open Collective donation page. The policy enforcement, documented in a GitHub issue, has sparked debate among developers and FOSS advocates. This decision threatens a key funding channel for a widely-used open-source project, illustrating how app store policies can exert control over independent software sustainability. It also highlights growing concerns about platform monopolies and the financial fragility of FOSS projects. Google Play's policy requires payments to go through its billing system, with a stated exception for tax-exempt donations. AnkiDroid's donations via Open Collective are not tax-deductible because the project is under Open Source Collective, a 501(c)(6) entity, not a 501(c)(3) charity, which may be why Google disallowed the external link.
 
-hackernews · twapi · Aug 31, 21:10 · [Discussion](https://news.ycombinator.com/item?id=49514878)
+hackernews · hexa555 · Sep 1, 10:11 · [Discussion](https://news.ycombinator.com/item?id=49520022)
 
-**Background**: Manifest V2 is the previous specification for Chrome extensions, allowing long-lived background pages and broad access to web requests. Google announced in 2020 that it would phase out MV2 in favor of MV3, which is designed to improve privacy, security, and performance. uBlock Origin is a free and open-source content blocker that uses dynamic filtering to block ads and malicious domains; it works best on Firefox, which still supports MV2-like APIs.
+**Background**: AnkiDroid is an open-source Android flashcard app based on the spaced-repetition system Anki, with millions of downloads on the Google Play Store. Open Collective is a crowdfunding and financial management platform that many open-source projects use to collect and manage donations. Google Play has historically enforced strict payment policies, and in 2019 it temporarily removed the WireGuard VPN app for linking to external payment options — a case often cited as an example of Google's control over app distribution.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3">Extensions / Manifest V3 | Chrome for Developers</a></li>
-<li><a href="https://developer.chrome.com/docs/extensions/develop/migrate/mv2-deprecation-timeline">Manifest V2 support timeline | Chrome for Developers</a></li>
-<li><a href="https://en.wikipedia.org/wiki/UBlock_Origin">uBlock Origin - Wikipedia</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Open_Collective">Open Collective - Wikipedia</a></li>
+<li><a href="https://en.wikipedia.org/wiki/List_of_Android_app_stores">List of Android app stores</a></li>
+<li><a href="https://github.com/ankidroid/Anki-Android">GitHub - ankidroid/Anki-Android: AnkiDroid: Anki flashcards on Android. Your secret trick to achieve superhuman information retention. · GitHub</a></li>
 
 </ul>
 </details>
 
-**Discussion**: The comments reflect strong frustration and distrust toward Google. Many users recommend switching to Firefox, noting that uBlock Origin performs better there and that no single company should have such control over the web. Some also highlight that ad blocking is now a safety issue, especially for less tech-savvy users who may fall for malicious ads.
+**Discussion**: Commenters largely sympathize with AnkiDroid and criticize Google's enforcement, recalling similar past incidents such as WireGuard's removal in 2019. Some clarified the tax-exempt donation nuance: Open Source Collective is a 501(c)(6), so donations aren't tax-deductible, which may explain Google's action. Others expressed gratitude to the app and some said they would switch to Linux phones to avoid Google's control.
 
-**Tags**: `#Chrome`, `#Manifest V3`, `#adblock`, `#privacy`, `#uBlock Origin`
+**Tags**: `#Android`, `#Open Source`, `#Google Play`, `#Donations`, `#App Store Policy`
 
 ---
 
 <a id="item-3"></a>
-## [NAT: The Original Sin of Internet Centralization?](https://dreamstation.systems/personal/ntppost.html) ⭐️ 8.0/10
+## [Jujutsu creator Martin von Zweigbergk joins ERSC](https://ersc.io/blog/martin-joins-ersc) ⭐️ 8.0/10
 
-A blog post at dreamstation.systems argues that Network Address Translation (NAT) is a root cause of internet centralization. The resulting discussion gained attention when Rusty Russell, the original implementer of Linux NAT, joined in with firsthand commentary on his design choices. This debate challenges conventional assumptions about network neutrality and end-to-end connectivity, showing how a pragmatic engineering fix contributed to today's client-server-dominated internet. It also highlights tensions between IPv4 address conservation, CGNAT, and the ability for users to host services. Rusty Russell explained that he avoided port reservation in Linux NAT to squeeze more connections into one IP address when the remote address allowed differentiation, which made incoming traffic from a different address unroutable. Commenters note that while ordinary home NAT can be acceptable, CGNAT is widely seen as a more serious threat to user freedom.
+Martin von Zweigbergk, the creator of the Jujutsu version control system, has joined ERSC (East River Source Control). The company also announced that its storage product will enter private beta later this month. This signals a major move in the version control space, as Jujutsu is seen as a promising next-generation git-compatible tool. ERSC is positioning itself as a competitor to GitHub, so having such a key developer on board could shape the future of code hosting and developer workflows. Von Zweigbergk will continue to be a core maintainer of jj as an open source project under the Apache 2.0 license. ERSC Storage enters private beta later this month, but the company's broader differentiation from GitHub remains under discussion.
 
-hackernews · robinpie · Aug 31, 02:23 · [Discussion](https://news.ycombinator.com/item?id=49504905)
+hackernews · steveklabnik · Sep 1, 17:46 · [Discussion](https://news.ycombinator.com/item?id=49525297)
 
-**Background**: Network Address Translation (NAT) maps multiple private IP addresses to a single public IP address, a technique widely adopted to cope with IPv4 address exhaustion. NAT also acts as a basic firewall by blocking unsolicited inbound connections, but it breaks the end-to-end principle that originally defined the internet. This has led some to argue that NAT encouraged a client-server model and made it harder for individuals to run always-available servers, pushing the internet toward data-center-based centralization.
+**Background**: Jujutsu (jj) is a Rust-based version control system that works with git repositories, offering features like undo, automatic rebasing, and a simpler command set. ERSC (East River Source Control) is a company aiming to build a code hosting platform that competes with GitHub.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://en.wikipedia.org/wiki/Network_address_translation">Network address translation - Wikipedia</a></li>
-<li><a href="https://www.geeksforgeeks.org/computer-networks/network-address-translation-nat/">Network Address Translation (NAT) - GeeksforGeeks</a></li>
-<li><a href="https://www.ietf.org/archive/id/draft-nottingham-avoiding-internet-centralization-01.html">Centralization and Internet Standards</a></li>
+<li><a href="https://ersc.io/blog/martin-joins-ersc">East River Source Control Names Jujutsu Creator Martin von... // ERSC</a></li>
+<li><a href="https://github.com/jj-vcs/jj">jj-vcs/jj - Jujutsu—a version control system</a></li>
 
 </ul>
 </details>
 
-**Discussion**: Commenters are split: some agree that NAT was an early blow to the open internet and trained users to see client-server as natural, while others argue that only CGNAT is truly harmful and that regular NAT has protected millions of insecure devices. Rusty Russell's candid account of the original design tradeoffs adds weight to both sides of the debate, with a tone of regret about unintended consequences.
+**Discussion**: Commenters are optimistic about jj's UX and its undo capabilities, but some question ERSC's value proposition relative to GitHub. One commenter argued that since jj is git-compatible, ERSC needs to demonstrate how it addresses GitHub's shortcomings rather than merely offering a new steering wheel.
 
-**Tags**: `#NAT`, `#internet architecture`, `#centralization`, `#networking`, `#commentary`
+**Tags**: `#jujutsu`, `#version-control`, `#ersc`, `#developer-tools`, `#announcement`
 
 ---
 
 <a id="item-4"></a>
-## [Sliding-window attention with sinks outperforms linear attention on long-context reasoning](https://www.reddit.com/r/MachineLearning/comments/1w3j1vw/slidingwindow_attention_beats_linear_on/) ⭐️ 8.0/10
+## [Small Transformer Trained in 1.5 Hours Beats Many LLMs on ARC Benchmark](https://mvakde.github.io/blog/44-on-arc-1/) ⭐️ 8.0/10
 
-A new arXiv preprint (2608.28444) reports that Sliding Window Attention (SWA) with attention sinks achieves 2–10x higher performance than linear attention variants on long-context reasoning benchmarks such as Needle-in-a-Haystack and BABILong. The authors argue that the post-training-to-linear-attention pipeline has not been properly compared against simpler baselines and recommend switching to SWA. This challenges the prevailing industry direction of spending post-training compute to produce linear-attention models. If verified, it suggests that a simple, fast, memory-efficient baseline could be superior for long-context reasoning, potentially saving significant resources. The paper focuses on SWA with attention sinks—special tokens that absorb excess attention and stabilize sliding-window generation. It reports that linear attention 'may have shown some promise' but likely needs training from scratch or extensive post-training to match SWA, and the authors 'strongly recommend switching to SWA.'
+A blog post by M. Vakde describes training a small autoregressive transformer from scratch in just 1.5 hours that achieves competitive results on the ARC benchmark, outperforming many larger LLMs. The author emphasizes this is not an LLM and shows complex reasoning tasks can be tackled without massive scaling. This challenges conventional scaling assumptions in AI, showing that a tiny, specially trained model can outperform huge LLMs on a key reasoning benchmark. It could reinvigorate interest in small models, efficient training methods, and novel architectures rather than simply scaling up compute. The model is a small autoregressive transformer trained from scratch (not an LLM) and reportedly reached top-5 performance on Kaggle. The author argues that 'training on eval puzzles' is not 'training on test labels' because ARC is a metalearning benchmark where learning from evaluation puzzles is allowed.
 
-reddit · r/MachineLearning · /u/Justgototheeffinmoon · Aug 31, 16:35
+hackernews · porridgeraisin · Sep 1, 09:52 · [Discussion](https://news.ycombinator.com/item?id=49519939)
 
-**Background**: Standard softmax attention has quadratic cost with sequence length, making long-context processing expensive. Sliding window attention restricts each token to attend only within a local window, reducing cost to linear, and attention sinks (retained early tokens) help stabilize generation. Linear attention variants also aim to reduce complexity but often require post-training or training from scratch to maintain performance. Benchmarks like BABILong test reasoning across facts distributed in long contexts.
+**Background**: The ARC (Abstraction and Reasoning Corpus) benchmark, introduced by François Chollet, consists of grid-based visual puzzles designed to measure general intelligence rather than simple pattern recognition. Traditionally, good performance on ARC required massive LLMs or complex architectures with huge training costs. This result suggests that with the right architecture and training strategy, a small transformer can achieve competitive results, potentially democratizing research on this important benchmark.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://arxiv.org/html/2608.28444v1">Sliding - window beats linear attention</a></li>
-<li><a href="https://carnotresearch.medium.com/let-the-chaos-sink-in-481c8a37471e">Let the Chaos Sink In. Balancing attention in transformers | Medium</a></li>
-<li><a href="https://arxiv.org/abs/2406.10149">[2406.10149] BABILong : Testing the Limits of LLMs with Long ...</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Abstraction_and_Reasoning_Corpus">Abstraction and Reasoning Corpus</a></li>
+<li><a href="https://deepgram.com/learn/arc-llm-benchmark-guide">ARC Benchmark Guide for Evaluating LLMs | Deepgram</a></li>
+<li><a href="https://arcprize.org/">ARC Prize</a></li>
 
 </ul>
 </details>
 
-**Tags**: `#attention`, `#long-context`, `#LLM`, `#efficient transformers`, `#research`
+**Discussion**: In the Hacker News discussion, the author (evilmathkid) clarified that the model is NOT an LLM but a small AR transformer, sparking debate about sample efficiency and whether training on eval puzzles constitutes cheating. Some commenters praised the result (e.g., 'Sounds like a good day to be you, top 5 on Kaggle'), while others asked for simpler explanations and discussed the validity of the approach. Overall sentiment was curious and mostly supportive, with some critical questions about methodology.
+
+**Tags**: `#AI`, `#machine-learning`, `#transformers`, `#ARC-benchmark`, `#LLMs`
 
 ---
 
 <a id="item-5"></a>
-## [OpenClaw 2.0 Delivers Largest Update Ever with 16,000 Pull Requests](https://openclaw.ai/blog/openclaw-2-accidentally) ⭐️ 8.0/10
+## [Apple reveals forensic evidence in OpenAI trade-secret lawsuit](https://9to5mac.com/2026/08/31/apple-openai-forensic-macbook-evidence/) ⭐️ 8.0/10
 
-OpenClaw released version 2.0 on August 30, its largest update ever, incorporating over 16,000 pull requests from 933 contributors, including 569 first-time participants. The release overhauls installation, messaging, memory, skills, models, browser, plugins, and security, and introduces shared cloud sessions for multiplayer collaboration. This release signals a major milestone for the open-source AI assistant space, demonstrating strong community momentum and a comprehensive overhaul of the user experience. The scale of contributions — roughly half of all pull requests in the project's history — shows how vibrant and active the OpenClaw community has become. The project went nearly seven weeks without a new release to prepare this update, and it simplifies the installation flow, rebuilds the browser-side experience, and adds shared cloud sessions that allow teams to take over ongoing work. The update touches every core area, from memory and skills to models and security, and runs on a user's own machine through existing chat apps.
+Apple has presented forensic evidence in its lawsuit against OpenAI, alleging that former employee Mr. Liu downloaded confidential Apple circuit schematics and used them in his work at OpenAI. The evidence reportedly includes iCloud-synced files from a MacBook and a Mac mini. The case could set a precedent on whether AI models that train on trade secrets create 'irreversible and continually propagating uses' of that secret. It also raises important privacy questions about cloud-synced data on company-owned devices. Apple discovered Liu's use of the schematic because he ran it on a Mac mini that synced via iCloud to the MacBook he took from Apple; Apple now seeks access to that Mac mini. Liu allegedly sent instructions to destroy evidence upon learning of Apple's investigation, and he used LTspice to run simulations while stating his AI 'agent' learned to operate the tool.
 
-telegram · zaihuapd · Aug 31, 04:38
+hackernews · colinprince · Sep 1, 20:19 · [Discussion](https://news.ycombinator.com/item?id=49527573)
 
-**Background**: OpenClaw is a free and open-source autonomous AI agent that executes tasks using large language models (LLMs) and uses messaging platforms as its main user interface. A pull request is a mechanism in distributed version control systems like Git and GitHub that lets contributors propose, review, and merge code changes; the large number of pull requests here indicates extensive collaborative development. The project aims to provide an open-source AI assistant that runs locally and integrates with chat apps users already have.
+**Background**: Trade secret law protects confidential business information from unauthorized use or disclosure. In the AI era, feeding trade secrets into AI models raises novel legal questions about whether the models' learned knowledge constitutes misappropriation. Additionally, iCloud synchronization can blur the line between personal and corporate data, as files on one device may automatically appear on another.
 
-<details><summary>References</summary>
-<ul>
-<li><a href="https://en.wikipedia.org/wiki/OpenClaw">OpenClaw</a></li>
-<li><a href="https://openclaw.ai/">OpenClaw — Open -Source AI Assistant</a></li>
-<li><a href="https://tbreak.com/openclaw-2-0-rebuilt-browser-app/">OpenClaw 2.0: rebuilt browser app, shared sessions</a></li>
+**Discussion**: Commenters are intrigued by Apple's argument that AI learning from trade secrets may cause irreversible propagation, calling it a high-impact legal test. Others voice privacy concerns about employers accessing personal information synced to company devices. One commenter jokingly hopes for an 'AI-laundered' Linux driver for MacBooks.
 
-</ul>
-</details>
-
-**Tags**: `#OpenClaw`, `#software release`, `#AI assistant`, `#open source`, `#major update`
+**Tags**: `#Apple`, `#OpenAI`, `#trade-secrets`, `#privacy`, `#litigation`
 
 ---
 
 <a id="item-6"></a>
-## [DeepSeek Releases V4-Flash-Vision-Exp, First Multimodal Model in V4 Family](https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp) ⭐️ 8.0/10
+## [Python 3.15.0 Release Candidate 2 Announced, Final Phase Before October Release](https://simonwillison.net/2026/Sep/1/python-315-rc-2/) ⭐️ 8.0/10
 
-DeepSeek released DeepSeek-V4-Flash-Vision-Exp on Hugging Face, an experimental multimodal model built on the V4-Flash architecture with added vision modules and continued training. Its multimodal agent benchmark score (ApexBench) improved from 26.2 to 36.5, while text agent performance stayed roughly flat. This matters because it brings multimodal understanding to the V4 series for the first time and significantly boosts agentic capabilities, making the model more useful for vision-language tasks. Developers and enterprises using DeepSeek models now have access to an experimental model that handles both text and visual inputs through the API. The model weights are available on Hugging Face, and the API accepts the model ID 'deepseek-v4-flash-vision-exp'. It is marked as experimental; ApexBench is an agent benchmark reported by DeepSeek using Pass@1, but the benchmark's task count and creating institution are not fully disclosed.
+Python 3.15.0 candidate 2 has been announced by release manager Hugo van Kemenade, marking the final release candidate phase before the stable release in October. From this point, only bug fixes are permitted between the candidate and the final release. This announcement signals that Python 3.15 is nearly ready for production, prompting third-party maintainers to test their projects and publish compatible wheels. It helps ensure the broader ecosystem is prepared for the new version on day one of its release. The release candidate is not yet available in GitHub Actions; maintainers can use the allow-prereleases and check-latest flags to automatically test against the latest RC and eventually the stable release. Wheels built against 3.15.0 release candidates will remain compatible with future 3.15 versions.
 
-telegram · zaihuapd · Aug 31, 11:41
+rss · Simon Willison · Sep 1, 14:59
 
-**Background**: DeepSeek is a Chinese AI lab known for open-weight large language models such as V3 and V4. The V4-Flash variant is a fast, text-only model, and this experimental release adds vision modules and continues training to unlock multimodal understanding. ApexBench evaluates interactive, multimodal agent performance on real-world tasks like academic poster editing and distributed HPC profiling.
+**Background**: A release candidate (RC) is a version that is feature-complete and only receives bug fixes before the final release. Python binary wheels are prebuilt distribution packages that install without compilation, and the Python Packaging User Guide notes they are preferred by pip and uv. The RC phase is a critical window for the Python ecosystem to validate compatibility and prepare wheels, as demonstrated by Simon Willison's earlier experience of finding a bug only after a release had shipped.
 
 <details><summary>References</summary>
 <ul>
-<li><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp">deepseek-ai/ DeepSeek - V 4 - Flash - Vision - Exp · Hugging Face</a></li>
-<li><a href="https://api-docs.deepseek.com/updates/">DeepSeek API Docs</a></li>
-<li><a href="https://www.datalearner.com/en/benchmarks/apexbench">ApexBench: Multimodal Agent Benchmark and Model Scores ...</a></li>
+<li><a href="https://packaging.python.org/specifications/binary-distribution-format/">Binary distribution format - Python Packaging User Guide</a></li>
+<li><a href="https://realpython.com/python-wheels/">What Are Python Wheels and Why Should You Care? – Real Python</a></li>
+<li><a href="https://teamhub.com/blog/understanding-the-significance-of-release-candidate-in-software-development/">What is Release Candidate in Software Development ?</a></li>
 
 </ul>
 </details>
 
-**Tags**: `#DeepSeek`, `#multimodal`, `#AI model`, `#vision`, `#agent`
+**Tags**: `#Python`, `#Release Candidate`, `#Software Development`, `#Ecosystem`
+
+---
+
+<a id="item-7"></a>
+## [Wrapture: New Python Library Unifies Tracing and Testing via Monkeypatching](https://simonwillison.net/2026/Aug/31/introducing-wrapture/) ⭐️ 8.0/10
+
+Graham Dumpleton released Wrapture, a Python library extending wrapt-style monkeypatching to combine tracing and testing. It provides configuration-based OpenTelemetry tracing and acts as an alternative to unittest.mock for overrides. This unifies two common developer workflows—observability and testing—through a single consistent API. It offers a novel, more transparent alternative to unittest.mock for instrumentation, and its agent-driven development shows a notable approach by an experienced maintainer. Wrapture is young—only a few weeks old—and every line of code and documentation was written by an AI assistant under Graham's direction. It supports an entirely configuration-based TOML mechanism for adding tracing, plus a binding API for stubbing functions in tests.
+
+rss · Simon Willison · Aug 31, 23:59
+
+**Background**: Monkeypatching refers to dynamically modifying or extending code at runtime. wrapt is a Python module by Graham Dumpleton (also known for mod_wsgi and New Relic's Python agent) that provides a transparent object proxy for building decorators, wrappers, and monkeypatching tools. Wrapture builds on those ideas, applying them to both tracing (via OpenTelemetry) and testing (as a unittest.mock alternative).
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://pypi.org/project/wrapt/">wrapt · PyPI</a></li>
+<li><a href="https://github.com/GrahamDumpleton/wrapt">GitHub - GrahamDumpleton/wrapt: A Python module for decorators, wrappers and monkey patching. · GitHub</a></li>
+<li><a href="https://stackoverflow.com/questions/5626193/what-is-monkey-patching">python - What is monkey patching? - Stack Overflow</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#Python`, `#testing`, `#tracing`, `#monkeypatching`, `#wrapt`
+
+---
+
+<a id="item-8"></a>
+## [Korea's Trillion-Dollar Sovereign AI Push: Nvidia Gains, Hynix Loses](https://newsletter.semianalysis.com/p/koreas-trillion-dollar-sovereign) ⭐️ 8.0/10
+
+Korea is investing trillions of dollars in sovereign AI, running a national AI tournament to select its own foundation models. SemiAnalysis argues this reshapes the competitive landscape, benefiting Nvidia while hurting Hynix and putting pressure on Samsung. Sovereign AI is a global trend as nations seek control over their AI infrastructure, data, and models. Korea's approach shows how government-led AI investments can shift the balance among semiconductor giants, with open-source models playing a pivotal role. Korea's Ministry of Science and ICT has selected LG AI Research, SK Telecom, Upstage, Naver Cloud, and NC AI to build domestic foundation models. The competition also involves citizen scoring, with winners set to power a free national AI service.
+
+rss · Semianalysis · Sep 1, 20:14
+
+**Background**: Sovereign AI refers to a nation's ability to control its entire AI stack—compute, data, models, and talent—rather than relying on foreign providers. Korea's push is part of a broader global movement where governments fund domestic AI champions to reduce dependence on US and Chinese technology. The tournament-style selection is unusual, opening the process to citizen participation and emphasizing open-source models.
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://www.mckinsey.com/featured-insights/mckinsey-explainers/what-is-sovereign-ai">What is sovereign AI? | McKinsey</a></li>
+<li><a href="https://koreatechtoday.com/korea-picks-five-national-champions-to-lead-sovereign-ai-push/">Korea Picks Five National Champions to Lead Sovereign AI Push</a></li>
+<li><a href="https://www.techtimes.com/articles/323429/20260806/korea-opens-citizen-lottery-pick-national-ai-champion-starting-friday.htm">Korea Opens Citizen Lottery To Pick National AI Champion ...</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#AI`, `#Semiconductors`, `#Sovereign AI`, `#Nvidia`, `#Korea`
+
+---
+
+<a id="item-9"></a>
+## [2026 Latent Reasoning Landscape Maps BDH-CQ, HRM/TRM, Coconut](https://www.reddit.com/r/MachineLearning/comments/1w4evwo/latent_reasoning_landscape_in_2026_mapping_bdhcq/) ⭐️ 8.0/10
+
+A Reddit analysis categorizes latent reasoning methods into at least five families, including Coconut, Soft Thinking, Abstract-CoT, recurrent-depth models, HRM/TRM, and BDH-CQ. The post argues that future progress may depend on architectures that reason in continuous hidden states rather than explicit chain-of-thought. This synthesis highlights a potential shift away from readable chain-of-thought, which underpins much of current interpretability and evaluation work. The trade-off between efficiency and traceability could shape future LLM architectures and safety practices. The post distinguishes latent reasoning families by how tasks are acquired (context, memory, or gradient optimization) and where intermediate computation occurs (language tokens, abstract tokens, or continuous latent states). It specifically highlights BDH-CQ, built on the Dragon hatchling architecture, which reports a point beyond the published cost–accuracy Pareto frontier on ARC-AGI-1 and shows scaling laws up to 600B parameters.
+
+reddit · r/MachineLearning · /u/Typical-Scene-5794 · Sep 1, 15:14
+
+**Background**: Latent reasoning is an alternative to chain-of-thought (CoT) prompting, where models repeatedly transform their continuous hidden state and decode only the final answer instead of verbalizing intermediate steps. Key papers include Coconut (arXiv 2412.06769), which feeds the last hidden state back as the next input embedding, and HRM/TRM (arXiv 2510.04871), which use tiny recursive networks for reasoning. BDH-CQ (arXiv 2608.09888) combines in-context learning with recurrent latent reasoning, allowing inference-time demonstrations to update model memory.
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://www.alphaxiv.org/abs/2608.09888">BDH-CQ: In-Context Learning with Recurrent Latent Reasoning | alphaXiv</a></li>
+<li><a href="https://arxiv.org/abs/2412.06769">[2412.06769] Training Large Language Models to Reason in a Continuous Latent Space</a></li>
+<li><a href="https://arxiv.org/pdf/2510.04871">Less is More: Recursive Reasoning with Tiny Networks</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#latent reasoning`, `#chain-of-thought`, `#LLM architectures`, `#AGI research`, `#continual learning`
+
+---
+
+<a id="item-10"></a>
+## [EvoUndo: Verifying Recoverability of LLM Agent Self-Evolution](https://www.reddit.com/r/MachineLearning/comments/1w4m0hq/evoundo_recoverabilityconstrained_selfevolution/) ⭐️ 8.0/10
+
+EvoUndo is a new framework for representing, synthesizing, diagnosing, and independently verifying the recoverability of LLM agent self-modifications. In tests across 600 unseen tasks, it identified 197 capability-improving mutations that failed recoverability, and an extended recovery calculus recovered 191 of them, versus 0 with standard repair strategies. This addresses a critical open problem in AI safety: how to let LLM agents improve themselves without risking irreversible harmful changes. By co-designing verification, state grounding, and recovery-language expressivity, EvoUndo provides a path toward safer autonomous agents. The framework uses a typed effect system to define recovery languages and a grounding-by-expressivity intervention to separate two bottlenecks. On the gpt-oss-120b backbone, exact-address diagnostics reduced recovery to 133/143 in the richer language, whereas a Qwen3.8-27B replication preserved the main effects but not this negative interaction, indicating model dependence.
+
+reddit · r/MachineLearning · /u/AccomplishedLeg1508 · Sep 1, 19:17
+
+**Background**: LLM agents increasingly modify their own prompts, tools, middleware, resources, and execution harnesses at runtime to improve capability. However, a successful mutation may leave persistent effects that cannot be safely reversed in states different from the one in which it was created. Recoverability is the property that a modification can be reversed without side effects. EvoUndo formalizes this concept and provides a framework for verifying it, co-designing verification, state grounding, and recovery-language expressivity.
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://arxiv.org/abs/2608.28363">[2608.28363] EvoUndo: Recoverability-Constrained Self ...</a></li>
+<li><a href="https://arxiv.org/pdf/2608.28363v1">EvoUndo: Recoverability-Constrained Self-Evolution for LLM ...</a></li>
+<li><a href="https://huggingface.co/papers/2608.28363">Paper page - EvoUndo : Recoverability -Constrained Self-Evolution for...</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#LLM agents`, `#self-evolution`, `#recoverability`, `#AI safety`, `#machine learning`
+
+---
+
+<a id="item-11"></a>
+## [Virtualizor Update Infrastructure BGP-Hijacked; Root Backdoor Installed via Malicious Updates](https://www.virtualizor.com/blog/security-incident-bgp-hijacking/) ⭐️ 8.0/10
+
+Between August 28 and 30, 2026, attackers hijacked BGP routes for Virtualizor's update infrastructure and delivered malicious update packages signed with valid TLS certificates. A limited number of systems that updated within that window were compromised with a root backdoor; the vendor says this was a distribution-chain compromise, not a software vulnerability. This is a serious supply-chain attack because BGP hijacking let attackers sign malicious updates with legitimate TLS certificates, making the payload look authentic. It also highlights how routing infrastructure, not just code bugs, can be exploited to backdoor server management platforms used by many hosting providers. Independent forensics showed the malicious update wrote a root SSH key, installed a Java payload, and created a persistent service. AlbaHost found compromise indicators on 5 of 34 hypervisors, and Softaculous stated there is currently no evidence that other products were affected.
+
+telegram · zaihuapd · Sep 1, 06:05
+
+**Background**: BGP (Border Gateway Protocol) is the routing protocol that directs traffic between autonomous systems on the internet; BGP hijacking occurs when an attacker corrupts routing tables and advertises fake routes so traffic destined for a legitimate IP prefix is diverted to attacker-controlled infrastructure. Virtualizor is a web-based VPS control panel developed by Softaculous, and its update servers are trusted endpoints that hosting providers use to apply patches. When those routes are hijacked, an update channel can be poisoned while still presenting valid TLS certificates, making malicious versions almost indistinguishable from official ones.
+
+<details><summary>References</summary>
+<ul>
+<li><a href="https://cybersecuritynews.com/virtualizor-compromise/">BGP Hijack Diverts Softaculous Traffic to Deliver Malicious Virtualizor ...</a></li>
+<li><a href="https://en.wikipedia.org/wiki/BGP_hijacking">BGP hijacking</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Softaculous">Softaculous</a></li>
+
+</ul>
+</details>
+
+**Tags**: `#BGP hijacking`, `#supply chain attack`, `#rootkit`, `#Virtualizor`, `#security`
 
 ---
